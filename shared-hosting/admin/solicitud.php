@@ -30,6 +30,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $chart = calculate_hosted_natal_chart($item);
             $query = db()->prepare("UPDATE service_requests SET chart_svg=?,chart_data=?,chart_engine=?,chart_generated_at=NOW(),chart_context=?,status='calculated' WHERE id=?");
             $query->execute([$chart['svg'], $chart['data_json'], $chart['engine'], $chart['context'], $id]);
+        } elseif ($action === 'save_browser_chart') {
+            $currentEngine = astrology_config();
+            if (($currentEngine['mode'] ?? '') !== 'github_pages') {
+                throw new RuntimeException('El motor activo no corresponde a GitHub Pages.');
+            }
+            $svg = sanitize_chart_svg((string)($_POST['chart_svg'] ?? ''));
+            $dataJson = trim((string)($_POST['chart_data'] ?? ''));
+            if ($dataJson === '' || strlen($dataJson) > 2_000_000) {
+                throw new RuntimeException('Los datos técnicos de la carta no son válidos.');
+            }
+            $chartData = json_decode($dataJson, true, 128, JSON_THROW_ON_ERROR);
+            if (!is_array($chartData)
+                || !is_array($chartData['subject'] ?? null)
+                || !is_array($chartData['planets'] ?? null)
+                || count($chartData['planets']) < 10
+                || !is_array($chartData['houses']['cusps'] ?? null)
+                || count($chartData['houses']['cusps']) < 13
+            ) {
+                throw new RuntimeException('GitHub devolvió una carta incompleta.');
+            }
+            $subject = $chartData['subject'];
+            if ((string)($subject['birth_date'] ?? '') !== (string)$item['birth_date']
+                || substr((string)($subject['birth_time'] ?? ''), 0, 5) !== substr((string)$item['birth_time'], 0, 5)
+                || abs((float)($subject['latitude'] ?? 999) - (float)$item['latitude']) > 0.0001
+                || abs((float)($subject['longitude'] ?? 999) - (float)$item['longitude']) > 0.0001
+            ) {
+                throw new RuntimeException('Los datos calculados no coinciden con la solicitud.');
+            }
+            $normalizedJson = json_encode($chartData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            $context = json_encode($chartData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            $query = db()->prepare("UPDATE service_requests SET chart_svg=?,chart_data=?,chart_engine='github_wasm',chart_generated_at=NOW(),chart_context=?,status='calculated' WHERE id=?");
+            $query->execute([$svg, $normalizedJson, $context, $id]);
         } elseif ($action === 'save_result') {
             $reading = trim((string)($_POST['ai_interpretation'] ?? ''));
             $context = trim((string)($_POST['chart_context'] ?? ''));
@@ -57,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (in_array($action, ['payment', 'save_result', 'generate_ai'], true) && result_ready($latest) && empty($latest['notified_at']) && send_result_email($latest)) {
             db()->prepare('UPDATE service_requests SET notified_at=NOW() WHERE id=?')->execute([$id]);
         }
-        flash('success', $action === 'calculate_chart' ? 'Carta natal calculada y guardada correctamente.' : 'Cambios guardados correctamente.');
+        flash('success', in_array($action, ['calculate_chart', 'save_browser_chart'], true) ? 'Carta natal calculada y guardada correctamente.' : 'Cambios guardados correctamente.');
         redirect('admin/solicitud.php?id=' . $id);
     } catch (Throwable $exception) {
         flash('error', $exception->getMessage());
@@ -92,11 +124,34 @@ render_header('Carta natal ' . $item['public_id'], 'admin-page', true);
       <div class="panel-heading"><span class="step">01</span><div><h2>Datos de nacimiento</h2><p>Base exacta del cálculo astronómico.</p></div></div>
       <dl class="data-list"><div><dt>Fecha</dt><dd><?= e($item['birth_date']) ?></dd></div><div><dt>Hora local</dt><dd><?= e(substr($item['birth_time'], 0, 5)) ?></dd></div><div class="wide"><dt>Lugar</dt><dd><?= e($item['birthplace']) ?></dd></div><div><dt>Latitud</dt><dd><?= e($item['latitude']) ?></dd></div><div><dt>Longitud</dt><dd><?= e($item['longitude']) ?></dd></div><div><dt>Zona horaria</dt><dd><?= e($item['timezone']) ?></dd></div></dl>
       <?php if ($item['notes']): ?><p><?= nl2br(e($item['notes'])) ?></p><?php endif; ?>
-      <?php if ($engine): ?><form method="post"><?= csrf_field() ?><button class="primary-button" name="action" value="calculate_chart"><span><?= $item['chart_svg'] ? 'Recalcular carta natal' : 'Generar carta natal' ?></span><span>✦</span></button></form><?php else: ?><div class="alert info">Configura el <a href="<?= e(url('admin/astrologia.php')) ?>">motor astrológico</a> para habilitar el cálculo.</div><?php endif; ?>
+      <?php if ($engine && $engine['mode'] === 'github_pages'):
+        $chartSubject = [
+          'name' => (string)$item['full_name'],
+          'birth_date' => (string)$item['birth_date'],
+          'birth_time' => substr((string)$item['birth_time'], 0, 8),
+          'birthplace' => (string)$item['birthplace'],
+          'latitude' => (float)$item['latitude'],
+          'longitude' => (float)$item['longitude'],
+          'timezone' => (string)$item['timezone'],
+        ];
+      ?>
+        <div class="github-chart-control" data-github-chart data-engine-url="<?= e(rtrim((string)$engine['base_url'], '/')) ?>">
+          <button class="primary-button" type="button" data-chart-button disabled><span><?= $item['chart_svg'] ? 'Recalcular carta natal' : 'Generar carta natal' ?></span><span>✦</span></button>
+          <p class="chart-engine-status" data-chart-status>Conectando con el motor gratuito de GitHub…</p>
+          <iframe data-chart-frame title="Motor astrológico de GitHub" hidden referrerpolicy="no-referrer"></iframe>
+          <script type="application/json" data-chart-subject><?= json_encode($chartSubject, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
+          <form method="post" data-chart-form hidden>
+            <?= csrf_field() ?>
+            <input type="hidden" name="action" value="save_browser_chart">
+            <textarea name="chart_svg"></textarea>
+            <textarea name="chart_data"></textarea>
+          </form>
+        </div>
+      <?php elseif ($engine): ?><form method="post"><?= csrf_field() ?><button class="primary-button" name="action" value="calculate_chart"><span><?= $item['chart_svg'] ? 'Recalcular carta natal' : 'Generar carta natal' ?></span><span>✦</span></button></form><?php else: ?><div class="alert info">Configura el <a href="<?= e(url('admin/astrologia.php')) ?>">motor astrológico</a> para habilitar el cálculo.</div><?php endif; ?>
     </article>
     <article class="panel chart-panel">
       <div class="panel-heading"><span class="step">02</span><div><h2>Carta calculada</h2><p>Tropical · casas Placidus · etiquetas en español.</p></div></div>
-      <?php if (!empty($item['chart_svg'])): ?><div class="chart-frame chart-svg"><?= sanitize_chart_svg((string)$item['chart_svg']) ?></div><p class="chart-meta">Generada <?= e((string)$item['chart_generated_at']) ?> · motor <?= e($item['chart_engine'] === 'rapidapi' ? 'Astrologer API' : 'servidor propio') ?></p><?php else: ?><div class="empty-compact"><span>◎</span><p>Usa “Generar carta natal” para crear la rueda y habilitar la interpretación.</p></div><?php endif; ?>
+      <?php if (!empty($item['chart_svg'])): ?><div class="chart-frame chart-svg"><?= sanitize_chart_svg((string)$item['chart_svg']) ?></div><p class="chart-meta">Generada <?= e((string)$item['chart_generated_at']) ?> · motor <?= e($item['chart_engine'] === 'rapidapi' ? 'Astrologer API' : ($item['chart_engine'] === 'github_wasm' ? 'GitHub + Swiss Ephemeris' : 'servidor propio')) ?></p><?php else: ?><div class="empty-compact"><span>◎</span><p>Usa “Generar carta natal” para crear la rueda y habilitar la interpretación.</p></div><?php endif; ?>
     </article>
   </section>
   <section class="panel interpretation-panel">
@@ -109,4 +164,5 @@ render_header('Carta natal ' . $item['public_id'], 'admin-page', true);
     <?php if ($ready): ?><p>El resultado está habilitado. <?= $item['notified_at'] ? 'Correo enviado el ' . e($item['notified_at']) : 'El correo automático aún no está registrado como enviado.' ?></p><div class="button-row"><a class="primary-button" href="<?= e($resultUrl) ?>" target="_blank">Abrir resultado</a><a class="secondary-button" href="<?= e($mailUrl) ?>">Correo manual</a><a class="secondary-button" href="<?= e($whatsUrl) ?>" target="_blank">WhatsApp</a><form method="post"><?= csrf_field() ?><button class="secondary-button" name="action" value="notify">Reintentar correo</button></form></div><?php else: ?><p>Confirma el pago y guarda la interpretación para habilitar el enlace privado.</p><?php endif; ?>
   </section>
 </section>
+<?php if ($engine && $engine['mode'] === 'github_pages'): ?><script defer src="<?= e(url('assets/github-chart-client.js?v=0.5.0')) ?>"></script><?php endif; ?>
 <?php render_footer();

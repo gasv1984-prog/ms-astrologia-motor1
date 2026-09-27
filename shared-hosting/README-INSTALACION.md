@@ -10,8 +10,8 @@ completa y como motor gratuito para el futuro VPS.
 - Selector país, departamento y municipio con coordenadas y zona horaria.
 - Acceso privado del cliente con código y contraseña.
 - Panel de administrador, confirmación de pagos y estados.
-- Cálculo de carta mediante un motor propio o Astrologer API, con SVG y datos
-  técnicos guardados.
+- Cálculo gratuito desde GitHub Pages con Swiss Ephemeris WebAssembly, rueda
+  SVG, casas Placidus, aspectos y datos técnicos guardados en Hostinger.
 - Claves cifradas de OpenAI o Gemini y comprobación de modelos.
 - Interpretación por IA en español a partir de la carta ya calculada.
 - Horóscopos generados como borrador, revisados y publicados por el administrador.
@@ -20,17 +20,15 @@ completa y como motor gratuito para el futuro VPS.
 
 ## Motor astrológico
 
-PHP compartido no ejecuta Swiss Ephemeris. Para mantener la precisión, esta
-edición **no pide a la IA que invente la carta**. En el menú **Motor
-astrológico** puedes elegir:
+La opción recomendada es **GitHub Pages + WebAssembly**. GitHub sirve los
+archivos estáticos de Swiss Ephemeris y el navegador del administrador calcula
+localmente las posiciones tropicales, las casas Placidus y los aspectos. El SVG
+y los datos técnicos se validan y guardan después en MySQL. No requiere VPS,
+RapidAPI ni una clave astrológica.
 
-- **Servidor propio**: conecta con la edición VPS de MS Astrología. Usa
-  Kerykeion y conserva el cálculo gratuito; requiere que el VPS esté activo.
-- **RapidAPI**: conecta con Astrologer API usando una clave propia. El proveedor
-  puede aplicar límites o costos según el plan.
-
-Ambas opciones solicitan la rueda con idioma `ES`. La IA solamente interpreta
-los datos astronómicos ya calculados.
+También se conservan dos alternativas: un servidor propio con Kerykeion para
+VPS y Astrologer API mediante RapidAPI. La IA solamente interpreta datos
+astronómicos ya calculados; nunca inventa la carta.
 
 ## Instalación en hPanel
 
@@ -45,8 +43,11 @@ los datos astronómicos ya calculados.
    `config.php`, el secreto, las tablas y el catálogo GeoNames.
 6. Abre el administrador. Una vez existe un administrador, el instalador queda
    bloqueado contra nuevas instalaciones.
-7. Abre **Motor astrológico** y configura el servidor propio o RapidAPI.
-8. Abre una carta natal y pulsa **Generar carta natal**.
+7. Publica `github-pages/` mediante el flujo **Publicar motor astrológico** del
+   repositorio. En GitHub, configura Pages con origen **GitHub Actions**.
+8. Abre **Motor astrológico**, elige **GitHub Pages + WebAssembly** y guarda
+   `https://gasv1984-prog.github.io/ms-astrologia-motor1/motor`.
+9. Abre una carta natal y pulsa **Generar carta natal**.
 
 ## Actualizaciones
 

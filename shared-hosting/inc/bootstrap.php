@@ -254,9 +254,9 @@ function render_header(string $title, string $bodyClass = '', bool $adminArea = 
     $flash = take_flash();
     ?><!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/ms-logo.png?v=0.4.0')) ?>">
-<link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.4.0')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.4.0')) ?>"></script></head>
-<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/ms-logo.png?v=0.4.0')) ?>" alt="Miguel Salazar Colombia"><span><strong>msastrologia</strong><small>Cartas natales con precisión</small></span></a>
+<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/ms-logo.png?v=0.5.0')) ?>">
+<link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.5.0')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.5.0')) ?>"></script></head>
+<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/ms-logo.png?v=0.5.0')) ?>" alt="Miguel Salazar Colombia"><span><strong>msastrologia</strong><small>Cartas natales con precisión</small></span></a>
 <?php if ($adminArea && $admin): ?><nav class="admin-nav"><a href="<?= e(url('admin/index.php')) ?>">Cartas natales</a><a href="<?= e(url('admin/astrologia.php')) ?>">Motor astrológico</a><a href="<?= e(url('admin/horoscopos.php')) ?>">Horóscopos</a><a href="<?= e(url('admin/ia.php')) ?>">Inteligencia artificial</a><a href="<?= e(url('admin/perfil.php')) ?>">Perfil</a><form action="<?= e(url('admin/logout.php')) ?>" method="post"><?= csrf_field() ?><button class="link-button">Salir</button></form></nav>
 <?php else: ?><nav class="public-nav"><a href="<?= e(url('solicitar.php')) ?>">Solicitar carta</a><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar carta</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="<?= e(url('admin/login.php')) ?>">Administración</a></nav><?php endif; ?></header><main>
 <?php if ($flash): ?><div class="alert <?= e($flash['type']) ?>" role="alert"><?= e($flash['message']) ?></div><?php endif; ?>
@@ -356,11 +356,16 @@ function ensure_feature_schema(): void
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     db()->exec("CREATE TABLE IF NOT EXISTS astrology_configs (
       id TINYINT UNSIGNED PRIMARY KEY,
-      mode ENUM('self_hosted','rapidapi') NOT NULL DEFAULT 'self_hosted',
+      mode ENUM('github_pages','self_hosted','rapidapi') NOT NULL DEFAULT 'github_pages',
       base_url VARCHAR(255) NOT NULL,
       encrypted_api_key TEXT NULL,
       updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    $engineMode = db()->query("SHOW COLUMNS FROM astrology_configs WHERE Field='mode'")->fetch();
+    if ($engineMode && !str_contains((string)$engineMode['Type'], 'github_pages')) {
+        db()->exec("ALTER TABLE astrology_configs MODIFY mode ENUM('github_pages','self_hosted','rapidapi') NOT NULL DEFAULT 'github_pages'");
+    }
 
     $columns = [];
     foreach (db()->query('SHOW COLUMNS FROM service_requests')->fetchAll() as $column) {

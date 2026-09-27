@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS service_requests (
 
 CREATE TABLE IF NOT EXISTS astrology_configs (
   id TINYINT UNSIGNED PRIMARY KEY,
-  mode ENUM('self_hosted','rapidapi') NOT NULL DEFAULT 'self_hosted',
+  mode ENUM('github_pages','self_hosted','rapidapi') NOT NULL DEFAULT 'github_pages',
   base_url VARCHAR(255) NOT NULL,
   encrypted_api_key TEXT NULL,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

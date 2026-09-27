@@ -328,6 +328,8 @@ td small { margin-top: 5px; }
 .chart-svg { padding: 12px; }
 .chart-svg svg { width: 100%; height: auto; max-height: 650px; display: block; }
 .chart-meta { margin: 11px 0 0; color: var(--muted); font-size: .74rem; }
+.github-chart-control { display: grid; gap: 10px; }
+.chart-engine-status { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }
 .astrology-engine-panel { max-width: 760px; }
 .astrology-engine-panel code { color: var(--gold-light); }
 .empty-compact { min-height: 360px; display: grid; place-items: center; align-content: center; gap: 15px; color: var(--muted); text-align: center; }

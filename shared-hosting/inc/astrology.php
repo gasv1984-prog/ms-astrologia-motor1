@@ -88,7 +88,9 @@ function calculate_hosted_natal_chart(array $item): array
     ];
     $mode = (string)$config['mode'];
     $key = !empty($config['encrypted_api_key']) ? decrypt_secret((string)$config['encrypted_api_key']) : '';
-    if ($mode === 'rapidapi') {
+    if ($mode === 'github_pages') {
+        throw new RuntimeException('El motor de GitHub se ejecuta en el navegador. Recarga la página y usa el botón de cálculo web.');
+    } elseif ($mode === 'rapidapi') {
         if ($key === '') {
             throw new RuntimeException('Falta la clave de RapidAPI del motor astrológico.');
         }

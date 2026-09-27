@@ -16,7 +16,7 @@ jobs:
     environment: produccion
     steps:
       - name: Descargar código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Comprobar secretos
         env:
