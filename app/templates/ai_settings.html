@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Inteligencia artificial · msastrologia{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+{% block content %}
+<section class="admin-shell narrow-shell" data-csrf="{{ session.csrf }}">
+  <div class="page-heading"><div><div class="eyebrow">Configuración</div><h1>Inteligencia artificial</h1></div><p>La clave se comprueba contra el proveedor y se guarda cifrada. msastrologia nunca muestra una clave almacenada.</p></div>
+  {% if message %}<div class="alert success">{{ message }}</div>{% endif %}{% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  {% set providers = [('openai','OpenAI','La clave habilita los modelos GPT disponibles en tu cuenta.'),('gemini','Google Gemini','Consulta los modelos que admiten generateContent.')] %}
+  <div class="provider-grid">
+  {% for key, title, description in providers %}
+    {% set current = configs|selectattr('provider','equalto',key)|first %}
+    <article class="panel provider-card" data-provider="{{ key }}">
+      <div class="provider-title"><span class="provider-icon">{% if key == 'openai' %}◈{% else %}✦{% endif %}</span><div><h2>{{ title }}</h2><p>{{ description }}</p></div></div>
+      {% if current %}<div class="configured"><span></span>Configurado · {{ current.model }} · verificado {{ current.last_checked_at[:10] }}</div>{% endif %}
+      <form action="/admin/ia/{{ key }}" method="post" class="stack-form ai-form">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <label>Clave API<input type="password" name="api_key" autocomplete="off" spellcheck="false" placeholder="{% if current %}Dejar vacío para conservar la clave{% elif key == 'gemini' %}AIza... o GEMINI_API_KEY=AIza...{% else %}sk-...{% endif %}"><small>{% if key == 'gemini' %}Puedes pegar solo la clave o la línea completa copiada de tu archivo .env. La verificación consulta directamente la lista de modelos de Google.{% else %}Se verificará contra la lista de modelos habilitados en tu cuenta.{% endif %}</small></label>
+        <button class="secondary-button verify-models" type="button">Comprobar clave y cargar modelos</button>
+        <label>Modelo<select name="model" required><option value="">Primero comprueba la clave</option>{% if current %}<option value="{{ current.model }}" selected>{{ current.model }}</option>{% endif %}</select></label>
+        <p class="form-feedback" aria-live="polite"></p>
+        <button class="primary-button" type="submit" disabled><span>Guardar configuración</span><span>→</span></button>
+      </form>
+    </article>
+  {% endfor %}
+  </div>
+  <div class="notice"><strong>Costos:</strong> el cálculo astrológico y la administración funcionan localmente sin pago por uso. OpenAI y Gemini pueden cobrar según la cuenta, el modelo y el consumo.</div>
+</section>
+{% endblock %}

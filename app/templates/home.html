@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Solicita tu carta natal · msastrologia{% endblock %}
+{% block body_class %}public-page{% endblock %}
+{% block content %}
+<section class="request-shell">
+  <div class="intro-panel">
+    <div class="eyebrow">Carta natal precisa</div>
+    <h1>Tu cielo,<br><em>en el instante exacto.</em></h1>
+    <p>Envía tus datos de nacimiento. Calculamos posiciones, casas y aspectos localmente; la interpretación por IA solo se usa si el administrador la habilita.</p>
+    <dl class="precision-list">
+      <div><dt>Coordenadas</dt><dd>Latitud y longitud exactas</dd></div>
+      <div><dt>Zona horaria</dt><dd>Conversión histórica IANA</dd></div>
+      <div><dt>Método</dt><dd>Zodiaco tropical, casas Placidus</dd></div>
+    </dl>
+    <div class="orbit-visual" aria-hidden="true">
+      <span class="orbit orbit-one"></span><span class="orbit orbit-two"></span><span class="orbit orbit-three"></span>
+      <span class="orbit-core">☉</span><i></i><b></b>
+    </div>
+  </div>
+
+  <div class="form-panel">
+    <div class="form-heading">
+      <span class="step">01</span>
+      <div><h2>Solicitar lectura</h2><p>Los campos exactos producen una carta más fiable.</p></div>
+    </div>
+    {% if errors %}
+    <div class="alert error" role="alert"><strong>Revisa la información</strong><ul>{% for error in errors %}<li>{{ error }}</li>{% endfor %}</ul></div>
+    {% endif %}
+    <form class="request-form" action="/solicitudes" method="post">
+      <label class="full">Nombre completo<input name="full_name" required maxlength="120" autocomplete="name" value="{{ values.full_name if values else '' }}"></label>
+      <label>Correo electrónico<input type="email" name="email" required maxlength="180" autocomplete="email" value="{{ values.email if values else '' }}"></label>
+      <label>Teléfono / WhatsApp<input type="tel" name="phone" required maxlength="24" autocomplete="tel" placeholder="313 700 9000" value="{{ values.phone if values else '' }}"></label>
+      <label>Fecha de nacimiento<input type="date" name="birth_date" required value="{{ values.birth_date if values else '' }}"></label>
+      <label>Hora exacta<input type="time" name="birth_time" required step="60" value="{{ values.birth_time if values else '' }}"></label>
+      <div class="full location-picker" data-location-picker data-geo-ready="{{ 'true' if geo_ready else 'false' }}" data-country="{{ values.country_code if values else 'CO' }}" data-admin1="{{ values.admin1_code if values else '' }}" data-city="{{ values.city_id if values else '' }}">
+        <div class="location-heading"><div><strong>Lugar de nacimiento</strong><small>Selecciona el lugar para obtener las coordenadas y la zona horaria.</small></div><button type="button" class="text-button manual-toggle">Ingresar manualmente</button></div>
+        <div class="location-selects">
+          <label>País<select name="country_code" class="country-select" required><option value="">Cargando países…</option></select></label>
+          <label>Departamento / estado<select name="admin1_code" class="admin1-select" required disabled><option value="">Selecciona un país</option></select></label>
+          <label class="full">Municipio / ciudad<select name="city_id" class="city-select" required disabled><option value="">Selecciona un departamento</option></select></label>
+        </div>
+        <p class="location-status" aria-live="polite"></p>
+      </div>
+      <label class="full manual-field">Lugar confirmado<input name="birthplace" required maxlength="180" placeholder="Ej. Bogotá, Cundinamarca, Colombia" value="{{ values.birthplace if values else '' }}" {% if geo_ready %}readonly{% endif %}></label>
+      <label class="manual-field">Latitud<input type="number" name="latitude" required min="-90" max="90" step="0.000001" placeholder="4.711000" value="{{ values.latitude if values else '' }}" {% if geo_ready %}readonly{% endif %}><small>Norte positivo, sur negativo</small></label>
+      <label class="manual-field">Longitud<input type="number" name="longitude" required min="-180" max="180" step="0.000001" placeholder="-74.072100" value="{{ values.longitude if values else '' }}" {% if geo_ready %}readonly{% endif %}><small>Este positivo, oeste negativo</small></label>
+      <label class="full manual-field">Zona horaria IANA<input name="timezone" required maxlength="80" placeholder="America/Bogota" value="{{ values.timezone if values else '' }}" {% if geo_ready %}readonly{% endif %}><small>Se completa automáticamente con la localidad.</small></label>
+      <label class="full">Notas para la lectura <span class="optional">opcional</span><textarea name="notes" rows="3" maxlength="1500" placeholder="¿Qué te gustaría explorar?">{{ values.notes if values else '' }}</textarea></label>
+      <fieldset class="payment-fields full">
+        <legend>Medio de pago</legend>
+        <p>Selecciona cómo deseas realizar el pago. El administrador confirmará la recepción antes de completar el servicio.</p>
+        <div class="payment-options">
+          {% for value, label, detail in [('nequi','Nequi','Pago desde Nequi'),('daviplata','Daviplata','Billetera Daviplata'),('llave','Llave','Transferencia por Llave')] %}
+          <label class="payment-option"><input type="radio" name="payment_method" value="{{ value }}" required {% if values and values.payment_method == value %}checked{% endif %}><span><strong>{{ label }}</strong><small>{{ detail }}</small></span></label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      <label class="full">Contraseña de seguimiento<input type="password" name="request_password" required minlength="8" maxlength="128" autocomplete="new-password" placeholder="Mínimo 8 caracteres"><small>La usarás junto con el código de solicitud para consultar el estado. Se guarda únicamente como hash y no puede ser vista por el administrador.</small></label>
+      <label class="consent full"><input type="checkbox" name="consent" value="yes" required {% if values and values.consent == 'yes' %}checked{% endif %}><span>Autorizo el tratamiento de estos datos para elaborar mi carta y gestionar esta solicitud.</span></label>
+      <button class="primary-button full" type="submit"><span>Enviar solicitud</span><span aria-hidden="true">→</span></button>
+    </form>
+    <p class="data-credit">Datos geográficos: <a href="https://www.geonames.org/" target="_blank" rel="noreferrer">GeoNames</a>, licencia CC BY 4.0.</p>
+  </div>
+</section>
+{% endblock %}

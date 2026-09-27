@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Acceso administrativo · msastrologia{% endblock %}
+{% block content %}
+<section class="center-card login-card">
+  <div class="eyebrow">Área privada</div>
+  <h1>Administración</h1>
+  <p>Accede para gestionar solicitudes, cálculos y proveedores de IA.</p>
+  {% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}
+  <form method="post" action="/admin/login" class="stack-form">
+    <label>Usuario<input name="username" required autocomplete="username" autofocus></label>
+    <label>Contraseña<input type="password" name="password" required autocomplete="current-password"></label>
+    <button class="primary-button" type="submit"><span>Ingresar</span><span aria-hidden="true">→</span></button>
+  </form>
+</section>
+{% endblock %}
+

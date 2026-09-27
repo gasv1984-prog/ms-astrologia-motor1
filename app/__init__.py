@@ -1,0 +1,2 @@
+"""msastrologia application package."""
+

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Cartas natales · msastrologia{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+{% block content %}
+<section class="admin-shell">
+  <div class="page-heading"><div><div class="eyebrow">Panel administrativo</div><h1>Cartas natales</h1></div><p>Hola, {{ admin.username }}. Aquí puedes calcular, interpretar y completar cada lectura.</p></div>
+  <div class="stat-grid">
+    <a class="stat-card {% if selected == 'all' %}active{% endif %}" href="/admin?status=all"><span>Total</span><strong>{{ counts.all }}</strong></a>
+    <a class="stat-card {% if selected == 'pending' %}active{% endif %}" href="/admin?status=pending"><span>Pendientes</span><strong>{{ counts.pending }}</strong></a>
+    <a class="stat-card {% if selected == 'calculated' %}active{% endif %}" href="/admin?status=calculated"><span>Calculadas</span><strong>{{ counts.calculated }}</strong></a>
+    <a class="stat-card {% if selected == 'completed' %}active{% endif %}" href="/admin?status=completed"><span>Completadas</span><strong>{{ counts.completed }}</strong></a>
+  </div>
+  <div class="table-card">
+    {% if requests %}
+    <div class="table-wrap"><table>
+      <thead><tr><th>Persona</th><th>Nacimiento</th><th>Estado</th><th>Recibida</th><th></th></tr></thead>
+      <tbody>{% for item in requests %}<tr>
+        <td><strong>{{ item.full_name }}</strong><small>{{ item.email }}</small></td>
+        <td>{{ item.birth_date }} · {{ item.birth_time }}<small>{{ item.birthplace }}</small></td>
+        <td><span class="status status-{{ item.status }}">{% if item.status == 'pending' %}Pendiente{% elif item.status == 'calculated' %}Calculada{% elif item.status == 'completed' %}Completada{% else %}Cancelada{% endif %}</span></td>
+        <td>{{ item.created_at[:10] }}</td>
+        <td><a class="row-link" href="/admin/solicitudes/{{ item.id }}">Abrir →</a></td>
+      </tr>{% endfor %}</tbody>
+    </table></div>
+    {% else %}<div class="empty-state"><span>☾</span><h2>No hay solicitudes en este estado</h2><p>Las nuevas solicitudes aparecerán aquí.</p></div>{% endif %}
+  </div>
+</section>
+{% endblock %}

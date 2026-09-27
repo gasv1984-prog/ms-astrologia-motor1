@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Consultar solicitud · msastrologia{% endblock %}
+{% block content %}
+<section class="center-card track-card">
+  <div class="eyebrow">Seguimiento privado</div>
+  <h1>Consulta tu solicitud</h1>
+  {% if error %}<div class="alert error" role="alert">{{ error }}</div>{% endif %}
+  {% if item %}
+    <div class="tracking-result">
+      <span class="status status-{{ item.status }}">{% if item.status == 'pending' %}Pendiente{% elif item.status == 'calculated' %}Carta calculada{% elif item.status == 'completed' %}Completada{% else %}Cancelada{% endif %}</span>
+      <h2>{{ item.full_name }}</h2>
+      <dl class="data-list">
+        <div><dt>Código</dt><dd>{{ item.public_id }}</dd></div>
+        <div><dt>Pago</dt><dd>{{ item.payment_method|capitalize }} · {% if item.payment_status == 'paid' %}Pagado{% elif item.payment_status == 'rejected' %}Rechazado{% else %}Pendiente{% endif %}</dd></div>
+        <div class="wide"><dt>Lugar de nacimiento</dt><dd>{{ item.birthplace }}</dd></div>
+        <div><dt>Recibida</dt><dd>{{ item.created_at[:10] }}</dd></div>
+        <div><dt>Última actualización</dt><dd>{{ item.updated_at[:10] }}</dd></div>
+      </dl>
+      {% if result_url %}<p class="track-note">Tu lectura está lista y el pago fue confirmado.</p><a class="primary-button" href="{{ result_url }}"><span>Abrir resultado y Aurita</span><span>→</span></a>{% elif item.ai_interpretation %}<p class="track-note">Tu lectura está lista. Se habilitará cuando el pago quede confirmado.</p>{% else %}<p class="track-note">La solicitud está siendo procesada. Aquí verás el cambio de estado cuando avance.</p>{% endif %}
+    </div>
+  {% else %}
+    <p>Ingresa el código recibido y la contraseña que creaste al solicitar el servicio.</p>
+    <form method="post" action="/mi-solicitud" class="stack-form">
+      <label>Código de solicitud<input name="public_id" required autocomplete="off" autofocus></label>
+      <label>Contraseña<input type="password" name="password" required autocomplete="current-password"></label>
+      <button class="primary-button" type="submit"><span>Consultar estado</span><span>→</span></button>
+    </form>
+  {% endif %}
+</section>
+{% endblock %}

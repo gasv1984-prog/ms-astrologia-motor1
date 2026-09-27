@@ -1,0 +1,57 @@
+name: Desplegar en Hostinger
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: produccion-hostinger
+  cancel-in-progress: false
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    environment: produccion
+    steps:
+      - name: Descargar código
+        uses: actions/checkout@v4
+
+      - name: Comprobar secretos
+        env:
+          FTP_HOST: ${{ secrets.HOSTINGER_FTP_HOST }}
+          FTP_USER: ${{ secrets.HOSTINGER_FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          FTP_DIRECTORY: ${{ secrets.HOSTINGER_FTP_DIRECTORY }}
+        run: |
+          test -n "$FTP_HOST" || (echo "Falta HOSTINGER_FTP_HOST" && exit 1)
+          test -n "$FTP_USER" || (echo "Falta HOSTINGER_FTP_USER" && exit 1)
+          test -n "$FTP_PASSWORD" || (echo "Falta HOSTINGER_FTP_PASSWORD" && exit 1)
+          test -n "$FTP_DIRECTORY" || (echo "Falta HOSTINGER_FTP_DIRECTORY" && exit 1)
+
+      - name: Instalar cliente FTPS
+        run: sudo apt-get update && sudo apt-get install -y lftp
+
+      - name: Publicar edición PHP
+        env:
+          FTP_HOST: ${{ secrets.HOSTINGER_FTP_HOST }}
+          FTP_USER: ${{ secrets.HOSTINGER_FTP_USER }}
+          FTP_PASSWORD: ${{ secrets.HOSTINGER_FTP_PASSWORD }}
+          FTP_DIRECTORY: ${{ secrets.HOSTINGER_FTP_DIRECTORY }}
+        run: |
+          lftp -u "$FTP_USER","$FTP_PASSWORD" "$FTP_HOST" <<EOF
+          set ftp:ssl-force true
+          set ftp:ssl-protect-data true
+          set ssl:verify-certificate true
+          set net:max-retries 2
+          set net:timeout 20
+          mirror --reverse --verbose --parallel=3 \
+            --exclude-glob config.php \
+            --exclude-glob '*.log' \
+            shared-hosting/ "$FTP_DIRECTORY"
+          bye
+          EOF
+
+      - name: Resumen
+        run: echo "Archivos publicados. config.php y los datos existentes se conservaron."

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Tu carta natal · MS Astrología{% endblock %}
+{% block body_class %}result-page{% endblock %}
+{% block content %}
+<section class="result-hero">
+  <div><div class="eyebrow">Lectura privada</div><h1>Tu carta natal,<br><em>{{ item.full_name }}</em></h1><p>Pago confirmado · carta calculada · interpretación lista</p></div>
+  <a class="primary-button" href="/resultado/{{ item.public_id }}/pdf?token={{ token }}"><span>Descargar PDF</span><span>↓</span></a>
+</section>
+
+<section class="result-layout">
+  <article class="panel result-chart">
+    <div class="panel-heading"><span class="step">01</span><div><h2>Tu mapa</h2><p>{{ item.birth_date }} · {{ item.birth_time }} · {{ item.birthplace }}</p></div></div>
+    <div class="chart-frame"><img src="/static/{{ item.chart_svg_path }}" alt="Carta natal de {{ item.full_name }}"></div>
+  </article>
+  <article class="panel result-reading">
+    <div class="panel-heading"><span class="step">02</span><div><h2>Tu interpretación</h2><p>Lectura simbólica y no determinista.</p></div></div>
+    <div class="interpretation-text rich-text">{{ item.ai_interpretation|markdown }}</div>
+  </article>
+</section>
+
+<section class="panel aurita-panel" data-aurita data-public-id="{{ item.public_id }}" data-token="{{ token }}">
+  <div class="aurita-heading"><div><div class="eyebrow">Tu guía de consulta</div><h2>Aurita</h2><p>Pregunta sobre símbolos, aspectos, casas o temas de tu carta. Aurita responde usando únicamente tu lectura.</p></div><span class="aurita-orb">✦</span></div>
+  <div class="chat-history" aria-live="polite">
+    {% if messages %}{% for message in messages %}<div class="chat-message {{ message.role }}"><strong>{{ 'Tú' if message.role == 'user' else 'Aurita' }}</strong><div class="rich-text">{{ message.content|markdown }}</div></div>{% endfor %}
+    {% else %}<div class="chat-welcome">Hola, soy Aurita. Puedo ayudarte a profundizar en la carta que acabas de recibir.</div>{% endif %}
+  </div>
+  {% if aurita_available %}
+  <form class="aurita-form">
+    <label for="aurita-message">Tu pregunta</label>
+    <div><textarea id="aurita-message" maxlength="1200" rows="3" required placeholder="¿Qué significa este aspecto en mi vida cotidiana?"></textarea><button class="primary-button" type="submit"><span>Preguntar</span><span>→</span></button></div>
+    <p class="form-feedback" aria-live="polite"></p>
+  </form>
+  {% else %}<div class="alert error">Aurita estará disponible cuando el administrador configure un proveedor de inteligencia artificial.</div>{% endif %}
+  <p class="aurita-disclaimer">Aurita ofrece reflexión simbólica. No sustituye orientación médica, legal, financiera ni psicológica profesional.</p>
+</section>
+{% endblock %}

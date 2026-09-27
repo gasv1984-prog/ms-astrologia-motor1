@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Perfil administrativo · msastrologia{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+{% block content %}
+<section class="admin-shell narrow-shell">
+  <div class="page-heading"><div><div class="eyebrow">Seguridad</div><h1>Perfil administrativo</h1></div><p>Cambia el usuario o la contraseña. La contraseña actual siempre es obligatoria.</p></div>
+  {% if message %}<div class="alert success">{{ message }}</div>{% endif %}{% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  <article class="panel profile-panel"><form action="/admin/perfil" method="post" class="stack-form">
+    <input type="hidden" name="csrf" value="{{ session.csrf }}">
+    <label>Usuario<input name="username" minlength="3" required value="{{ admin.username }}" autocomplete="username"></label>
+    <label>Contraseña actual<input type="password" name="current_password" required autocomplete="current-password"></label>
+    <label>Nueva contraseña <span class="optional">opcional</span><input type="password" name="new_password" minlength="8" autocomplete="new-password"><small>Déjala vacía para conservar la actual.</small></label>
+    <button class="primary-button" type="submit"><span>Guardar cambios</span><span>→</span></button>
+  </form></article>
+</section>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Horóscopo · MS Astrología{% endblock %}
+{% block body_class %}horoscope-page{% endblock %}
+{% block content %}
+<section class="horoscope-hero">
+  <div class="eyebrow">Guía simbólica del momento</div>
+  <h1>Consulta tu <em>horóscopo.</em></h1>
+  <p>Selecciona tu signo y encuentra una lectura creada con IA, revisada y publicada por el administrador de MS Astrología.</p>
+</section>
+<nav class="zodiac-filter" aria-label="Seleccionar signo">
+  <a class="{% if not selected %}active{% endif %}" href="/horoscopo"><span>✦</span><small>Todos</small></a>
+  {% for key, sign in zodiac_signs.items() %}<a class="{% if selected == key %}active{% endif %}" href="/horoscopo?sign={{ key }}"><span>{{ sign[1] }}</span><small>{{ sign[0] }}</small></a>{% endfor %}
+</nav>
+<section class="horoscope-public-grid">
+  {% if not items %}<div class="empty-state horoscope-empty"><span>☾</span><h2>Aún no hay una lectura publicada{% if selected %} para {{ zodiac_signs[selected][0] }}{% endif %}.</h2><p>Vuelve pronto para consultar una nueva guía.</p></div>{% endif %}
+  {% for item in items %}<article class="horoscope-public-card reveal">
+    <div class="horoscope-card-top"><span class="zodiac-large">{{ zodiac_signs[item.sign][1] }}</span><div><small>{{ zodiac_signs[item.sign][0] }}</small><span>{{ item.period_label }}</span></div></div>
+    <h2>{{ item.title }}</h2><div class="rich-text">{{ item.content|markdown }}</div>
+    <div class="horoscope-card-footer"><span>{% if item.period_type == 'daily' %}Lectura diaria{% elif item.period_type == 'monthly' %}Lectura mensual{% else %}Lectura semanal{% endif %}</span><span>Orientación simbólica, no determinista</span></div>
+  </article>{% endfor %}
+</section>
+{% endblock %}

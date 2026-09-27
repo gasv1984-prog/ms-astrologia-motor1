@@ -1,0 +1,29 @@
+services:
+  msastrologia:
+    build:
+      context: .
+    container_name: msastrologia
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      APP_ENV: production
+      DATABASE_PATH: /app/storage/db/msastrologia.db
+      GEODATA_PATH: /app/data/geonames.db
+      RESULTS_DIR: /app/storage/pdf
+    ports:
+      - "${APP_PORT:-8000}:8000"
+    volumes:
+      - ./storage/db:/app/storage/db
+      - ./storage/pdf:/app/storage/pdf
+      - ./storage/generated:/app/app/static/generated
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/', timeout=5).read()"
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 45s

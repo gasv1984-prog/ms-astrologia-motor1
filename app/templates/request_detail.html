@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}{{ item.full_name }} · msastrologia{% endblock %}
+{% block body_class %}admin-page{% endblock %}
+{% block content %}
+<section class="admin-shell detail-shell">
+  <a class="back-link" href="/admin">← Volver a cartas natales</a>
+  {% if message %}<div class="alert success">{{ message }}</div>{% endif %}
+  {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+  <div class="detail-heading">
+    <div><div class="eyebrow">Solicitud #{{ item.id }}</div><h1>{{ item.full_name }}</h1><p>{{ item.email }} · recibida {{ item.created_at[:10] }}</p></div>
+    <div class="status-controls">
+      <form action="/admin/solicitudes/{{ item.id }}/estado" method="post" class="status-form">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <label>Solicitud<select name="status" onchange="this.form.submit()">
+          {% for value, label in [('pending','Pendiente'),('calculated','Calculada'),('completed','Completada'),('cancelled','Cancelada')] %}<option value="{{ value }}" {% if item.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select></label>
+      </form>
+      <form action="/admin/solicitudes/{{ item.id }}/pago" method="post" class="status-form">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <label>Pago<select name="payment_status" onchange="this.form.submit()">
+          {% for value, label in [('pending','Pendiente'),('paid','Pagado'),('rejected','Rechazado')] %}<option value="{{ value }}" {% if item.payment_status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select></label>
+      </form>
+    </div>
+  </div>
+  <div class="detail-grid">
+    <article class="panel data-panel">
+      <div class="panel-heading"><span class="step">01</span><div><h2>Datos de nacimiento</h2><p>Base del cálculo astronómico.</p></div></div>
+      <dl class="data-list">
+        <div><dt>Teléfono</dt><dd>{{ item.phone or 'No registrado' }}</dd></div>
+        <div><dt>Medio de pago</dt><dd>{{ item.payment_method|capitalize if item.payment_method else 'No registrado' }} · {% if item.payment_status == 'paid' %}Pagado{% elif item.payment_status == 'rejected' %}Rechazado{% else %}Pendiente{% endif %}</dd></div>
+        <div><dt>Fecha y hora local</dt><dd>{{ item.birth_date }} · {{ item.birth_time }}</dd></div>
+        <div><dt>Lugar</dt><dd>{{ item.birthplace }}</dd></div>
+        <div><dt>Coordenadas</dt><dd>{{ item.latitude }}, {{ item.longitude }}</dd></div>
+        <div><dt>Zona horaria</dt><dd>{{ item.timezone }}</dd></div>
+        <div><dt>Servicio</dt><dd>Carta natal</dd></div>
+        {% if item.notes %}<div class="wide"><dt>Notas</dt><dd>{{ item.notes }}</dd></div>{% endif %}
+      </dl>
+      <form action="/admin/solicitudes/{{ item.id }}/calcular" method="post">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <button class="primary-button" type="submit"><span>{% if item.chart_json %}Recalcular carta natal{% else %}Generar carta natal{% endif %}</span><span>✦</span></button>
+      </form>
+    </article>
+    <article class="panel chart-panel">
+      <div class="panel-heading"><span class="step">02</span><div><h2>Carta calculada</h2><p>Kerykeion 5 · tropical · Placidus.</p></div></div>
+      {% if item.chart_svg_path %}<div class="chart-frame"><img src="/static/{{ item.chart_svg_path }}" alt="Carta natal de {{ item.full_name }}"></div>
+      {% else %}<div class="empty-compact"><span>◎</span><p>Calcula la carta para ver la rueda y habilitar la interpretación.</p></div>{% endif %}
+    </article>
+  </div>
+  <article class="panel interpretation-panel">
+    <div class="panel-heading"><span class="step">03</span><div><h2>Interpretación</h2><p>Opcional, generada por el proveedor configurado.</p></div></div>
+    {% if item.ai_interpretation %}<div class="interpretation-text rich-text">{{ item.ai_interpretation|markdown }}</div>{% endif %}
+    {% if item.chart_json %}
+      {% if configs %}<form action="/admin/solicitudes/{{ item.id }}/interpretar" method="post" class="inline-form">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <label>Proveedor<select name="provider">{% for config in configs %}<option value="{{ config.provider }}">{{ config.provider|capitalize }} · {{ config.model }}</option>{% endfor %}</select></label>
+        <button class="primary-button" type="submit"><span>{% if item.ai_interpretation %}Generar de nuevo{% else %}Generar interpretación{% endif %}</span><span>→</span></button>
+      </form>{% else %}<p class="hint">Configura primero <a href="/admin/ia">OpenAI o Gemini</a>.</p>{% endif %}
+    {% endif %}
+  </article>
+  <article class="panel delivery-panel">
+    <div class="panel-heading"><span class="step">04</span><div><h2>Entrega al cliente</h2><p>Correo, WhatsApp, PDF y acceso privado a Aurita.</p></div></div>
+    {% if delivery_ready %}
+      <div class="delivery-grid">
+        <div><span>Correo</span><strong>{% if deliveries.email and deliveries.email.status == 'sent' %}Enviado{% elif deliveries.email and deliveries.email.status == 'error' %}Error de envío{% else %}Envío manual{% endif %}</strong><small>{{ deliveries.email.detail if deliveries.email else 'SMTP no configurado' }}</small></div>
+        <div><span>WhatsApp</span><strong>{% if deliveries.whatsapp and deliveries.whatsapp.status == 'sent' %}Enviado{% elif deliveries.whatsapp and deliveries.whatsapp.status == 'error' %}Error de envío{% else %}Envío manual{% endif %}</strong><small>{{ deliveries.whatsapp.detail if deliveries.whatsapp else 'Cloud API no configurada' }}</small></div>
+      </div>
+      <label class="result-link-field">Enlace privado<input value="{{ result_url }}" readonly></label>
+      <div class="delivery-actions">
+        <a class="secondary-button" href="{{ manual_email_url }}">Abrir correo preparado</a>
+        <a class="secondary-button" href="{{ manual_whatsapp_url }}" target="_blank" rel="noreferrer">Abrir WhatsApp preparado</a>
+        <form action="/admin/solicitudes/{{ item.id }}/notificar" method="post">
+          <input type="hidden" name="csrf" value="{{ session.csrf }}">
+          <button class="primary-button" type="submit"><span>Reintentar entrega</span><span>→</span></button>
+        </form>
+      </div>
+    {% else %}
+      <p class="hint">La entrega se habilita cuando el pago esté marcado como pagado y la interpretación haya sido generada.</p>
+    {% endif %}
+  </article>
+</section>
+{% endblock %}
