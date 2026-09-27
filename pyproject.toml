@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Gestion de solicitudes astrologicas con calculo local e interpretacion opcional por IA"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "AGPL-3.0-or-later" }
+license = "AGPL-3.0-or-later"
 dependencies = [
   "cairosvg>=2.7,<3",
   "cryptography>=42,<47",
@@ -25,3 +25,10 @@ dev = ["pytest>=8,<9"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+exclude = ["data*", "tests*"]
+
+[tool.setuptools.package-data]
+app = ["templates/*.html", "static/*", "static/generated/.gitkeep"]
