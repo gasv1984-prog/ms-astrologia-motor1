@@ -49,8 +49,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($id < 1 || strlen($title) < 4 || strlen($content) < 80) {
                 throw new RuntimeException('El título o el contenido del horóscopo está incompleto.');
             }
-            $stmt = db()->prepare("UPDATE horoscopes SET sign=?,period_type=?,period_label=?,title=?,content=?,status=?,published_at=IF(?='published',COALESCE(published_at,NOW()),NULL) WHERE id=?");
-            $stmt->execute([$sign, $periodType, $periodLabel, $title, $content, $status, $status, $id]);
+            $publishedAt = $status === 'published' ? 'COALESCE(published_at,NOW())' : 'NULL';
+            $stmt = db()->prepare("UPDATE horoscopes SET sign=?,period_type=?,period_label=?,title=?,content=?,status=?,published_at={$publishedAt} WHERE id=?");
+            $stmt->execute([$sign, $periodType, $periodLabel, $title, $content, $status, $id]);
             flash('success', $status === 'published' ? 'Horóscopo publicado en la página.' : 'Borrador guardado.');
             redirect('admin/horoscopos.php?edit=' . $id);
         }

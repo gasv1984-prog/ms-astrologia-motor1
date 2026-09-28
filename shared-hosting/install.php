@@ -29,11 +29,13 @@ function installerPdo(array $values): PDO
         (int)$values['db_port'],
         $values['db_name']
     );
-    return new PDO($dsn, $values['db_user'], $values['db_password'], [
+    $pdo = new PDO($dsn, $values['db_user'], $values['db_password'], [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES => false,
     ]);
+    $pdo->exec('SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci');
+    return $pdo;
 }
 
 function applySchema(PDO $pdo, string $path): void
@@ -78,6 +80,7 @@ function importGeodata(PDO $pdo, string $path): int
     } finally {
         gzclose($handle);
     }
+    $pdo->exec('SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci');
     return $statements;
 }
 

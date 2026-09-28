@@ -55,6 +55,11 @@ Antes de reemplazar archivos, descarga una copia de la base desde phpMyAdmin y
 conserva siempre `config.php`. La migración automática agrega las columnas y
 tablas nuevas sin borrar solicitudes, resultados o credenciales existentes.
 
+Desde la versión 0.5.1 la aplicación también unifica automáticamente la sesión
+y las columnas de MySQL en `utf8mb4_unicode_ci`. Esto corrige el error 1267
+`Illegal mix of collations` en instalaciones creadas previamente con la
+collation predeterminada `utf8mb4_general_ci` de Hostinger.
+
 ## Requisitos
 
 - PHP 8.1 o superior.

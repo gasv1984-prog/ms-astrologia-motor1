@@ -164,5 +164,5 @@ render_header('Carta natal ' . $item['public_id'], 'admin-page', true);
     <?php if ($ready): ?><p>El resultado está habilitado. <?= $item['notified_at'] ? 'Correo enviado el ' . e($item['notified_at']) : 'El correo automático aún no está registrado como enviado.' ?></p><div class="button-row"><a class="primary-button" href="<?= e($resultUrl) ?>" target="_blank">Abrir resultado</a><a class="secondary-button" href="<?= e($mailUrl) ?>">Correo manual</a><a class="secondary-button" href="<?= e($whatsUrl) ?>" target="_blank">WhatsApp</a><form method="post"><?= csrf_field() ?><button class="secondary-button" name="action" value="notify">Reintentar correo</button></form></div><?php else: ?><p>Confirma el pago y guarda la interpretación para habilitar el enlace privado.</p><?php endif; ?>
   </section>
 </section>
-<?php if ($engine && $engine['mode'] === 'github_pages'): ?><script defer src="<?= e(url('assets/github-chart-client.js?v=0.5.0')) ?>"></script><?php endif; ?>
+<?php if ($engine && $engine['mode'] === 'github_pages'): ?><script defer src="<?= e(url('assets/github-chart-client.js?v=0.5.1')) ?>"></script><?php endif; ?>
 <?php render_footer();
