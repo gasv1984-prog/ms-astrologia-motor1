@@ -27,12 +27,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $focus = trim((string)($_POST['focus'] ?? ''));
             $signName = $signs[$sign][0];
-            $prompt = "Escribe un horóscopo en español para {$signName}. Período: {$periods[$periodType]} ({$periodLabel}). "
+            $prompt = "Escribe un horóscopo GENERAL en español para el público de signo {$signName}. Período: {$periods[$periodType]} ({$periodLabel}). "
                 . ($focus !== '' ? "Enfoque editorial: {$focus}. " : '')
-                . "Usa un tono cálido, elegante, simbólico y práctico. Incluye un título breve y luego cuatro secciones: panorama, vínculos, trabajo y recursos, bienestar. "
+                . "Aclara de forma natural que es una orientación colectiva por signo solar y no una lectura de carta natal individual. Usa un tono cálido, elegante, simbólico y práctico. "
+                . "Incluye cuatro secciones con títulos en mayúsculas: PANORAMA, VÍNCULOS, TRABAJO Y RECURSOS, BIENESTAR. "
                 . "Cierra con una pregunta de reflexión. No hagas afirmaciones deterministas, diagnósticos médicos, predicciones financieras garantizadas ni generes miedo. "
-                . "No uses bloques de código. Entrega entre 350 y 550 palabras en Markdown sencillo.";
-            $content = ai_generate($provider, decrypt_secret($ai['encrypted_api_key']), $ai['model'], $prompt);
+                . "No uses Markdown: no escribas almohadillas, asteriscos, tablas ni bloques de código. Entrega entre 350 y 550 palabras.";
+            $content = clean_ai_text(ai_generate($provider, decrypt_secret($ai['encrypted_api_key']), $ai['model'], $prompt));
             $title = $signName . ' · ' . $periodLabel;
             $stmt = db()->prepare("INSERT INTO horoscopes(sign,period_type,period_label,title,content,status,ai_provider,ai_model) VALUES(?,?,?,?,?,'draft',?,?)");
             $stmt->execute([$sign, $periodType, $periodLabel, $title, $content, $provider, $ai['model']]);
@@ -44,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($action === 'save') {
             $id = (int)($_POST['id'] ?? 0);
             $title = trim((string)($_POST['title'] ?? ''));
-            $content = trim((string)($_POST['content'] ?? ''));
+            $content = clean_ai_text((string)($_POST['content'] ?? ''));
             $status = ($_POST['status'] ?? 'draft') === 'published' ? 'published' : 'draft';
             if ($id < 1 || strlen($title) < 4 || strlen($content) < 80) {
                 throw new RuntimeException('El título o el contenido del horóscopo está incompleto.');

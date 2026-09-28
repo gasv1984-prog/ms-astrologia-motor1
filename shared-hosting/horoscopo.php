@@ -12,8 +12,10 @@ render_header('Horóscopo · MS Astrología', 'horoscope-page');
 <section class="horoscope-hero">
   <div class="eyebrow">Guía simbólica del momento</div>
   <h1>Consulta tu <em>horóscopo.</em></h1>
-  <p>Selecciona tu signo y encuentra una lectura creada con IA, revisada y publicada por el administrador de MS Astrología.</p>
+  <p>Selecciona tu signo y encuentra una orientación general creada con IA, revisada y publicada por el administrador de MS Astrología.</p>
+  <div class="button-row"><a class="primary-button" href="<?= e(url('solicitar.php?servicio=horoscopo_personalizado')) ?>"><span>Solicitar horóscopo personalizado</span><span>→</span></a></div>
 </section>
+<section class="panel horoscope-personal-cta"><div><div class="eyebrow">Una lectura solo para ti</div><h2>¿Necesitas revisar tus tránsitos personales?</h2><p>El horóscopo público es general por signo solar. La opción personalizada calcula tu carta natal, tus casas y los tránsitos para la fecha o período que elijas.</p></div><a class="secondary-button" href="<?= e(url('solicitar.php?servicio=horoscopo_personalizado')) ?>">Solicitar lectura personal →</a></section>
 <nav class="zodiac-filter" aria-label="Seleccionar signo">
   <a class="<?= $selected === '' ? 'active' : '' ?>" href="<?= e(url('horoscopo.php')) ?>"><span>✦</span><small>Todos</small></a>
   <?php foreach ($signs as $key => [$name, $symbol]): ?><a class="<?= $selected === $key ? 'active' : '' ?>" href="?sign=<?= e($key) ?>"><span><?= e($symbol) ?></span><small><?= e($name) ?></small></a><?php endforeach; ?>

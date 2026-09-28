@@ -125,8 +125,10 @@ El repositorio incluye tres flujos de GitHub Actions:
 - **Desplegar en Hostinger** publica manualmente `shared-hosting/` mediante
   FTPS y conserva `config.php` y los datos existentes.
 - **Publicar motor astrológico** despliega Swiss Ephemeris WebAssembly en
-  GitHub Pages. El navegador calcula posiciones, casas Placidus y aspectos sin
-  VPS ni RapidAPI; Hostinger valida y conserva el resultado.
+  GitHub Pages. El navegador calcula posiciones, casas Placidus, nodos,
+  aspectos y tránsitos sin VPS ni RapidAPI; Hostinger valida y conserva el
+  resultado. La rueda sigue el orden tradicional de casas en sentido contrario
+  a las manecillas del reloj y el eje nodal se valida a 180 grados exactos.
 
 Para activar el despliegue crea un entorno llamado `produccion` y configura
 estos secretos en GitHub: `HOSTINGER_FTP_HOST`, `HOSTINGER_FTP_USER`,

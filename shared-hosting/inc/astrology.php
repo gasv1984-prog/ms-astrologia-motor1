@@ -113,7 +113,108 @@ function calculate_hosted_natal_chart(array $item): array
     return [
         'svg' => $svg,
         'data_json' => json_encode($chartData, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
-        'context' => json_encode($chartData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR),
+        'context' => chart_context_for_ai($chartData),
         'engine' => $mode,
     ];
+}
+
+function chart_context_for_ai(array $chart): string
+{
+    if (!is_array($chart['planets'] ?? null)) {
+        return json_encode($chart, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+    }
+    $lines = [];
+    $metadata = $chart['metadata'] ?? [];
+    $subject = $chart['subject'] ?? [];
+    $lines[] = 'CÁLCULO ASTRONÓMICO VERIFICADO';
+    $lines[] = 'Motor: ' . ($metadata['engine'] ?? 'Swiss Ephemeris') . ' ' . ($metadata['engine_version'] ?? '');
+    $lines[] = 'Efemérides: ' . ($metadata['ephemeris'] ?? 'Swiss Ephemeris');
+    $lines[] = 'Zodiaco: ' . ($metadata['zodiac'] ?? 'Tropical') . '; casas: ' . ($metadata['house_system'] ?? 'Placidus') . '.';
+    $lines[] = 'UTC de nacimiento: ' . ($subject['utc'] ?? '') . '; día juliano: ' . ($subject['julian_day'] ?? '') . '.';
+    $lines[] = '';
+    $lines[] = 'POSICIONES NATALES';
+    foreach ($chart['planets'] as $planet) {
+        $sign = $planet['sign'] ?? [];
+        $position = sprintf('%02d° %02d′ %02d″ de %s', (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), (string)($sign['name'] ?? ''));
+        $motion = !empty($planet['retrograde']) ? ' retrógrado' : ' directo';
+        $lines[] = sprintf('%s: %s; casa %s;%s; longitud %.6f°; velocidad %.6f°/día.', $planet['name'] ?? $planet['key'], $position, $planet['house'] ?? '—', $motion, (float)($planet['longitude'] ?? 0), (float)($planet['longitude_speed'] ?? 0));
+    }
+    if (is_array($chart['angles'] ?? null)) {
+        $lines[] = '';
+        $lines[] = 'ÁNGULOS';
+        foreach ($chart['angles'] as $point) {
+            $sign = $point['sign'] ?? [];
+            $lines[] = sprintf('%s: %02d° %02d′ %02d″ de %s (%.6f°).', $point['name'] ?? $point['key'], (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), $sign['name'] ?? '', (float)($point['longitude'] ?? 0));
+        }
+    }
+    if (is_array($chart['lots'] ?? null)) {
+        $lines[] = '';
+        $lines[] = 'PARTES ARÁBIGAS';
+        foreach ($chart['lots'] as $point) {
+            $sign = $point['sign'] ?? [];
+            $lines[] = sprintf('%s: %02d° %02d′ de %s, casa %s.', $point['name'] ?? $point['key'], (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), $sign['name'] ?? '', $point['house'] ?? '—');
+        }
+    }
+    $lines[] = '';
+    $lines[] = 'CÚSPIDES DE CASAS';
+    foreach (($chart['houses']['details'] ?? []) as $house) {
+        $sign = $house['sign'] ?? [];
+        $lines[] = sprintf('Casa %d: %02d° %02d′ %02d″ de %s (%.6f°).', (int)($house['house'] ?? 0), (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), $sign['name'] ?? '', (float)($house['longitude'] ?? 0));
+    }
+    $lines[] = '';
+    $lines[] = 'ASPECTOS NATALES';
+    foreach (($chart['aspects'] ?? []) as $aspect) {
+        $lines[] = sprintf('%s %s %s; orbe %.3f°; %s; aspecto %s.', $aspect['first_name'] ?? $aspect['first'] ?? '', $aspect['name'] ?? '', $aspect['second_name'] ?? $aspect['second'] ?? '', (float)($aspect['orb'] ?? 0), $aspect['movement'] ?? '', $aspect['family'] ?? '');
+    }
+    if (is_array($chart['lunar_phase'] ?? null)) {
+        $phase = $chart['lunar_phase'];
+        $lines[] = '';
+        $lines[] = sprintf('FASE LUNAR: %s, ángulo %.4f°, iluminación %.2f%%, ciclo %s.', $phase['name'] ?? '', (float)($phase['angle'] ?? 0), (float)($phase['illumination_percentage'] ?? 0), $phase['cycle'] ?? '');
+    }
+    if (is_array($chart['distribution'] ?? null)) {
+        $lines[] = 'DISTRIBUCIÓN DE ELEMENTOS: ' . json_encode($chart['distribution']['elements']['percentages'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '.';
+        $lines[] = 'DISTRIBUCIÓN DE MODALIDADES: ' . json_encode($chart['distribution']['modalities']['percentages'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . '.';
+    }
+    if (is_array($chart['transits'] ?? null)) {
+        $transits = $chart['transits'];
+        $lines[] = '';
+        $lines[] = 'TRÁNSITOS PERSONALIZADOS PARA ' . ($transits['reference_date'] ?? '') . ' (' . ($transits['period_type'] ?? '') . ')';
+        foreach (($transits['planets'] ?? []) as $planet) {
+            if (str_contains((string)($planet['key'] ?? ''), 'south_node')) { continue; }
+            $sign = $planet['sign'] ?? [];
+            $lines[] = sprintf('%s en tránsito: %02d° %02d′ de %s, recorriendo la casa natal %s%s.', $planet['name'] ?? $planet['key'], (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), $sign['name'] ?? '', $planet['house'] ?? '—', !empty($planet['retrograde']) ? ', retrógrado' : '');
+        }
+        $lines[] = 'ASPECTOS DE TRÁNSITO A LA CARTA NATAL';
+        foreach (($transits['natal_aspects'] ?? []) as $aspect) {
+            $lines[] = sprintf('%s en tránsito %s %s natal; orbe %.3f°.', $aspect['transit_name'] ?? $aspect['transit'] ?? '', $aspect['name'] ?? '', $aspect['natal_name'] ?? $aspect['natal'] ?? '', (float)($aspect['orb'] ?? 0));
+        }
+    }
+    return implode("\n", $lines);
+}
+
+function service_interpretation_prompt(array $item, string $context): string
+{
+    $name = trim((string)$item['full_name']);
+    $common = "Usa exclusivamente los datos astronómicos verificados que aparecen al final. No inventes posiciones, casas ni aspectos. "
+        . "Escribe en español natural y dirígete directamente a {$name} en segunda persona singular (tú), mencionando su nombre de forma cálida y natural. "
+        . "Cada interpretación debe conectar planeta, signo, casa y aspectos concretos; evita frases genéricas que servirían para cualquier persona. "
+        . "Distingue hechos calculados de interpretación simbólica. No hagas afirmaciones deterministas ni diagnósticos o consejos médicos, legales o financieros. "
+        . "No uses Markdown: no escribas almohadillas, asteriscos, guiones decorativos, tablas ni bloques de código. "
+        . "Pon cada título de sección en una línea independiente y en MAYÚSCULAS, seguido por párrafos completos. ";
+    if (($item['service_type'] ?? 'natal_chart') === 'personal_horoscope') {
+        $periods = ['daily' => 'diario', 'weekly' => 'semanal', 'monthly' => 'mensual'];
+        $period = $periods[$item['horoscope_period'] ?? 'monthly'] ?? 'mensual';
+        return "Redacta un horóscopo PERSONALIZADO {$period} para {$name}, con fecha de referencia {$item['horoscope_date']}. "
+            . $common
+            . "No redactes un horóscopo general por signo solar: interpreta los tránsitos calculados sobre su carta natal y prioriza los aspectos de menor orbe. "
+            . "Enfoque solicitado por la persona: " . ((string)($item['horoscope_focus'] ?? '') ?: 'visión integral del período') . ". "
+            . "Extensión: 900 a 1400 palabras. Secciones obligatorias: CLIMA PERSONAL DEL PERÍODO, TRÁNSITOS CENTRALES, VÍNCULOS, TRABAJO Y RECURSOS, BIENESTAR Y RITMO, FECHAS Y DECISIONES A OBSERVAR, ORIENTACIÓN PARA INTEGRAR EL CICLO.\n\n"
+            . "DATOS DE {$name}: {$item['birth_date']} {$item['birth_time']}, {$item['birthplace']} ({$item['timezone']}).\n\nDATOS TÉCNICOS VERIFICADOS:\n{$context}";
+    }
+    return "Redacta una lectura natal profesional, profunda y personalizada para {$name}. "
+        . $common
+        . "Extensión: 1400 a 2200 palabras. Integra contradicciones y repeticiones del mapa; no describas cada posición de forma aislada. "
+        . "Secciones obligatorias: RETRATO CENTRAL, SOL LUNA Y ASCENDENTE, MENTE DESEO Y ACCIÓN, VÍNCULOS Y AFECTIVIDAD, VOCACIÓN Y DIRECCIÓN, RECURSOS Y FORTALEZAS, TENSIONES Y APRENDIZAJES, NODOS LILITH Y QUIRÓN, INTEGRACIÓN PERSONAL, PREGUNTAS PARA TU PROCESO.\n\n"
+        . "DATOS DE {$name}: {$item['birth_date']} {$item['birth_time']}, {$item['birthplace']} ({$item['latitude']}, {$item['longitude']}, {$item['timezone']}).\n"
+        . "NOTAS APORTADAS: " . ((string)($item['notes'] ?? '') ?: 'ninguna') . ".\n\nDATOS TÉCNICOS VERIFICADOS:\n{$context}";
 }

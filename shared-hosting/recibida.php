@@ -7,8 +7,10 @@ if (!$item) {
     exit('Solicitud no encontrada.');
 }
 $paymentLabel = ucfirst((string)($item['payment_method'] ?? 'pago seleccionado'));
+$serviceLabel = ($item['service_type'] ?? 'natal_chart') === 'personal_horoscope' ? 'horóscopo personalizado' : 'carta natal';
 $whatsappMessage = sprintf(
-    'Hola Miguel, quiero confirmar el pago de mi solicitud %s por %s. Mi nombre es %s. Adjunto el comprobante.',
+    'Hola Miguel, quiero confirmar el pago de mi %s, solicitud %s, por %s. Mi nombre es %s. Adjunto el comprobante.',
+    $serviceLabel,
     (string)$item['public_id'],
     $paymentLabel,
     (string)$item['full_name']
@@ -20,6 +22,7 @@ render_header('Solicitud recibida');
   <div class="success-symbol">✦</div>
   <div class="eyebrow">Solicitud recibida</div>
   <h1>Gracias, <?= e($item['full_name']) ?>.</h1>
+  <p>Recibimos tu solicitud de <strong><?= e($serviceLabel) ?></strong>.</p>
   <p>Guarda este código junto con la contraseña que creaste:</p>
   <div class="request-code"><?= e($item['public_id']) ?></div>
   <div class="payment-next-step">

@@ -83,7 +83,7 @@ render_header('MS Astrología · Miguel Salazar', 'landing-page');
 <section class="horoscope-home reveal">
   <div class="horoscope-home-heading"><div><div class="eyebrow">Nuevo · Actualizado por el administrador</div><h2>El cielo de hoy, signo por signo.</h2></div><p>Lecturas generadas con la IA configurada, revisadas antes de publicarse y disponibles para consulta en cualquier momento.</p></div>
   <?php if ($horoscopePreview): ?><div class="horoscope-preview-grid"><?php foreach ($horoscopePreview as $item): ?><a href="<?= e(url('horoscopo.php?sign=' . $item['sign'])) ?>"><span><?= e(zodiac_signs()[$item['sign']][1] ?? '✦') ?></span><small><?= e(zodiac_signs()[$item['sign']][0] ?? ucfirst($item['sign'])) ?></small><strong><?= e($item['title']) ?></strong><em><?= e($item['period_label']) ?></em><b>Consultar →</b></a><?php endforeach; ?></div><?php else: ?><div class="horoscope-coming"><span>✦</span><div><strong>Próximamente encontrarás aquí las lecturas publicadas.</strong><p>El administrador puede generar el primer horóscopo desde su panel.</p></div></div><?php endif; ?>
-  <a class="secondary-button horoscope-all-link" href="<?= e(url('horoscopo.php')) ?>">Consultar todos los signos →</a>
+  <div class="button-row"><a class="secondary-button horoscope-all-link" href="<?= e(url('horoscopo.php')) ?>">Consultar todos los signos →</a><a class="primary-button" href="<?= e(url('solicitar.php?servicio=horoscopo_personalizado')) ?>">Solicitar horóscopo personalizado →</a></div>
 </section>
 
 <section class="payment-confirmation reveal" id="confirmar-pago">

@@ -14,8 +14,8 @@ try {
     $historyStmt = db()->prepare('SELECT role,content FROM aurita_messages WHERE request_id=? ORDER BY id DESC LIMIT 8');
     $historyStmt->execute([$item['id']]); $history = array_reverse($historyStmt->fetchAll());
     $historyText = implode("\n", array_map(fn($m) => strtoupper($m['role']) . ': ' . $m['content'], $history));
-    $prompt = "Eres Aurita, una orientadora esoterica experta, calida y responsable. Responde unicamente a partir de la lectura entregada; no inventes posiciones planetarias ni afirmes destinos inevitables.\n\nLECTURA:\n{$item['ai_interpretation']}\n\nCONVERSACION:\n{$historyText}\n\nPREGUNTA:\n{$question}";
-    $answer = ai_generate($ai['provider'], decrypt_secret($ai['encrypted_api_key']), $ai['model'], $prompt);
+    $prompt = "Eres Aurita, una orientadora esotérica experta, cálida y responsable. Habla directamente con {$item['full_name']} en español y en segunda persona singular. Responde únicamente a partir de la lectura entregada; no inventes posiciones planetarias ni afirmes destinos inevitables. No uses Markdown, almohadillas ni asteriscos.\n\nLECTURA:\n{$item['ai_interpretation']}\n\nCONVERSACIÓN:\n{$historyText}\n\nPREGUNTA:\n{$question}";
+    $answer = clean_ai_text(ai_generate($ai['provider'], decrypt_secret($ai['encrypted_api_key']), $ai['model'], $prompt));
     $stmt = db()->prepare('INSERT INTO aurita_messages (request_id,role,content) VALUES (?,?,?)');
     $stmt->execute([$item['id'],'user',$question]); $stmt->execute([$item['id'],'assistant',$answer]);
     echo json_encode(['answer'=>$answer,'answer_html'=>render_markdown($answer)], JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);

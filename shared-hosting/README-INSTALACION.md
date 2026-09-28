@@ -6,12 +6,13 @@ completa y como motor gratuito para el futuro VPS.
 
 ## Qué funciona
 
-- Página pública y formulario de cartas natales.
+- Página pública y formulario de cartas natales y horóscopos personalizados.
 - Selector país, departamento y municipio con coordenadas y zona horaria.
 - Acceso privado del cliente con código y contraseña.
 - Panel de administrador, confirmación de pagos y estados.
-- Cálculo gratuito desde GitHub Pages con Swiss Ephemeris WebAssembly, rueda
-  SVG, casas Placidus, aspectos y datos técnicos guardados en Hostinger.
+- Cálculo gratuito desde GitHub Pages con Swiss Ephemeris WebAssembly y
+  archivos de efemérides oficiales, rueda SVG, casas Placidus, nodos, aspectos,
+  tránsitos y datos técnicos guardados en Hostinger.
 - Claves cifradas de OpenAI o Gemini y comprobación de modelos.
 - Interpretación por IA en español a partir de la carta ya calculada.
 - Horóscopos generados como borrador, revisados y publicados por el administrador.
@@ -25,6 +26,13 @@ archivos estáticos de Swiss Ephemeris y el navegador del administrador calcula
 localmente las posiciones tropicales, las casas Placidus y los aspectos. El SVG
 y los datos técnicos se validan y guardan después en MySQL. No requiere VPS,
 RapidAPI ni una clave astrológica.
+
+La versión 0.6.0 corrige la orientación tradicional: las casas avanzan en
+sentido contrario a las manecillas del reloj desde el Ascendente, el MC queda
+arriba y el IC abajo. También valida que cada Nodo Sur sea la oposición exacta
+de 180 grados de su Nodo Norte, e incorpora nodos verdadero y medio, Lilith,
+Quirón, partes arábigas, fase lunar, distribuciones y tránsitos personalizados.
+Los archivos incluidos cubren de 1800 a 2399.
 
 También se conservan dos alternativas: un servidor propio con Kerykeion para
 VPS y Astrologer API mediante RapidAPI. La IA solamente interpreta datos
@@ -47,7 +55,8 @@ astronómicos ya calculados; nunca inventa la carta.
    repositorio. En GitHub, configura Pages con origen **GitHub Actions**.
 8. Abre **Motor astrológico**, elige **GitHub Pages + WebAssembly** y guarda
    `https://gasv1984-prog.github.io/ms-astrologia-motor1/motor`.
-9. Abre una carta natal y pulsa **Generar carta natal**.
+9. Abre una solicitud y pulsa **Generar carta natal** o **Generar carta y
+   tránsitos**, según el servicio solicitado.
 
 ## Actualizaciones
 

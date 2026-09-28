@@ -211,8 +211,7 @@ function decrypt_secret(string $encoded): string
 
 function render_markdown(string $text): string
 {
-    $safe = e($text);
-    $safe = preg_replace('/\*\*(.+?)\*\*/s', '<strong>$1</strong>', $safe) ?? $safe;
+    $safe = e(clean_ai_text($text));
     $lines = preg_split('/\R/', $safe) ?: [];
     $html = '';
     $inList = false;
@@ -222,10 +221,14 @@ function render_markdown(string $text): string
             if ($inList) { $html .= '</ul>'; $inList = false; }
             continue;
         }
-        if (preg_match('/^(#{1,4})\s+(.+)$/', $trim, $m)) {
+        $plain = html_entity_decode(strip_tags($trim), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $looksLikeHeading = mb_strlen($plain) <= 90 && (
+            preg_match('/^(SÍNTESIS|RETRATO|SOL,? LUNA|PLANETAS|VÍNCULOS|RELACIONES|VOCACIÓN|TRABAJO|FORTALEZAS|DESAFÍOS|INTEGRACIÓN|CICLO|PANORAMA|BIENESTAR|PREGUNTAS|ORIENTACIÓN)\b/iu', $plain)
+            || ($plain === mb_strtoupper($plain, 'UTF-8') && preg_match('/\p{L}/u', $plain))
+        );
+        if ($looksLikeHeading) {
             if ($inList) { $html .= '</ul>'; $inList = false; }
-            $level = min(4, strlen($m[1]) + 1);
-            $html .= "<h{$level}>{$m[2]}</h{$level}>";
+            $html .= '<h3>' . rtrim($trim, ':') . '</h3>';
         } elseif (preg_match('/^(?:[-*]|\d+\.)\s+(.+)$/', $trim, $m)) {
             if (!$inList) { $html .= '<ul>'; $inList = true; }
             $html .= '<li>' . $m[1] . '</li>';
@@ -238,13 +241,28 @@ function render_markdown(string $text): string
     return $html;
 }
 
+function clean_ai_text(string $text): string
+{
+    $text = str_replace(["\r\n", "\r"], "\n", trim($text));
+    $text = preg_replace('/^\s*```[^\n]*$/mi', '', $text) ?? $text;
+    $text = preg_replace('/^\s*#{1,6}\s*/m', '', $text) ?? $text;
+    $text = preg_replace('/^\s*\*\s+/m', '- ', $text) ?? $text;
+    $text = preg_replace('/\*{1,3}([^*\n]+?)\*{1,3}/u', '$1', $text) ?? $text;
+    $text = preg_replace('/_{1,3}([^_\n]+?)_{1,3}/u', '$1', $text) ?? $text;
+    $text = str_replace(['***', '**', '###', '##', '`'], '', $text);
+    $text = preg_replace('/[ \t]+$/m', '', $text) ?? $text;
+    $text = preg_replace('/\n{3,}/', "\n\n", $text) ?? $text;
+    return trim($text);
+}
+
 function send_result_email(array $item): bool
 {
     if (!result_ready($item) || !filter_var($item['email'], FILTER_VALIDATE_EMAIL)) {
         return false;
     }
-    $subject = 'Tu lectura de MS Astrologia esta lista';
-    $message = "Hola {$item['full_name']},\n\nTu pago fue confirmado y tu lectura esta disponible:\n" . result_url($item) . "\n\nConserva este enlace privado.";
+    $service = ($item['service_type'] ?? 'natal_chart') === 'personal_horoscope' ? 'horóscopo personalizado' : 'carta natal';
+    $subject = 'Tu ' . $service . ' de MS Astrologia está listo';
+    $message = "Hola {$item['full_name']},\n\nTu pago fue confirmado y tu {$service} está disponible:\n" . result_url($item) . "\n\nEl enlace incluye tu resultado, la descarga en PDF y el acceso privado a Aurita. Consérvalo de forma segura.";
     $headers = ['Content-Type: text/plain; charset=UTF-8'];
     if (cfg('mail_from')) {
         $headers[] = 'From: MS Astrologia <' . cfg('mail_from') . '>';
@@ -258,11 +276,11 @@ function render_header(string $title, string $bodyClass = '', bool $adminArea = 
     $flash = take_flash();
     ?><!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/ms-logo.png?v=0.5.1')) ?>">
-<link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.5.1')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.5.1')) ?>"></script></head>
-<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/ms-logo.png?v=0.5.1')) ?>" alt="Miguel Salazar Colombia"><span><strong>msastrologia</strong><small>Cartas natales con precisión</small></span></a>
-<?php if ($adminArea && $admin): ?><nav class="admin-nav"><a href="<?= e(url('admin/index.php')) ?>">Cartas natales</a><a href="<?= e(url('admin/astrologia.php')) ?>">Motor astrológico</a><a href="<?= e(url('admin/horoscopos.php')) ?>">Horóscopos</a><a href="<?= e(url('admin/ia.php')) ?>">Inteligencia artificial</a><a href="<?= e(url('admin/perfil.php')) ?>">Perfil</a><form action="<?= e(url('admin/logout.php')) ?>" method="post"><?= csrf_field() ?><button class="link-button">Salir</button></form></nav>
-<?php else: ?><nav class="public-nav"><a href="<?= e(url('solicitar.php')) ?>">Solicitar carta</a><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar carta</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="<?= e(url('admin/login.php')) ?>">Administración</a></nav><?php endif; ?></header><main>
+<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/ms-logo.png?v=0.6.0')) ?>">
+<link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.6.0')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.6.0')) ?>"></script></head>
+<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/ms-logo.png?v=0.6.0')) ?>" alt="Miguel Salazar Colombia"><span><strong>msastrologia</strong><small>Cartas natales con precisión</small></span></a>
+<?php if ($adminArea && $admin): ?><nav class="admin-nav"><a href="<?= e(url('admin/index.php')) ?>">Solicitudes</a><a href="<?= e(url('admin/astrologia.php')) ?>">Motor astrológico</a><a href="<?= e(url('admin/horoscopos.php')) ?>">Horóscopos</a><a href="<?= e(url('admin/ia.php')) ?>">Inteligencia artificial</a><a href="<?= e(url('admin/perfil.php')) ?>">Perfil</a><form action="<?= e(url('admin/logout.php')) ?>" method="post"><?= csrf_field() ?><button class="link-button">Salir</button></form></nav>
+<?php else: ?><nav class="public-nav"><a href="<?= e(url('solicitar.php')) ?>">Solicitar lectura</a><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar solicitud</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="<?= e(url('admin/login.php')) ?>">Administración</a></nav><?php endif; ?></header><main>
 <?php if ($flash): ?><div class="alert <?= e($flash['type']) ?>" role="alert"><?= e($flash['message']) ?></div><?php endif; ?>
 <?php
 }
@@ -434,6 +452,10 @@ function ensure_feature_schema(): void
         'chart_data' => 'ALTER TABLE service_requests ADD COLUMN chart_data LONGTEXT NULL AFTER chart_svg',
         'chart_engine' => 'ALTER TABLE service_requests ADD COLUMN chart_engine VARCHAR(30) NULL AFTER chart_data',
         'chart_generated_at' => 'ALTER TABLE service_requests ADD COLUMN chart_generated_at DATETIME NULL AFTER chart_engine',
+        'service_type' => "ALTER TABLE service_requests ADD COLUMN service_type ENUM('natal_chart','personal_horoscope') NOT NULL DEFAULT 'natal_chart' AFTER notes",
+        'horoscope_period' => "ALTER TABLE service_requests ADD COLUMN horoscope_period ENUM('daily','weekly','monthly') NULL AFTER service_type",
+        'horoscope_date' => 'ALTER TABLE service_requests ADD COLUMN horoscope_date DATE NULL AFTER horoscope_period',
+        'horoscope_focus' => 'ALTER TABLE service_requests ADD COLUMN horoscope_focus VARCHAR(500) NULL AFTER horoscope_date',
     ];
     foreach ($migrations as $name => $sql) {
         if (!isset($columns[$name])) {

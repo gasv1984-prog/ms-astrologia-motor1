@@ -27,3 +27,36 @@ def test_horoscope_publish_query_does_not_compare_mixed_parameters():
 
     assert "IF(?='published'" not in source
     assert "$status === 'published'" in source
+
+
+def test_github_engine_uses_official_ephemerides_and_counterclockwise_houses():
+    source = (ROOT / "github-pages" / "motor" / "engine.js").read_text(encoding="utf-8")
+
+    assert "CalculationFlag.SwissEphemeris | CalculationFlag.Speed" in source
+    assert "sepl_18.se1" in source
+    assert "semo_18.se1" in source
+    assert "seas_18.se1" in source
+    assert "180 + normalize(longitude - ascendant)" in source
+    assert "zodiac_direction: 'contrario a las manecillas del reloj'" in source
+    assert "Nodo Sur verdadero" in source
+    assert "southLongitude = normalize(north.longitude + 180)" in source
+
+    ephemeris = ROOT / "github-pages" / "motor" / "ephe"
+    assert (ephemeris / "sepl_18.se1").stat().st_size > 400_000
+    assert (ephemeris / "semo_18.se1").stat().st_size > 1_000_000
+    assert (ephemeris / "seas_18.se1").stat().st_size > 200_000
+
+
+def test_personal_horoscope_keeps_natal_calculation_and_transits():
+    schema = (HOSTING / "database" / "schema.sql").read_text(encoding="utf-8")
+    form = (HOSTING / "solicitar.php").read_text(encoding="utf-8")
+    admin = (HOSTING / "admin" / "solicitud.php").read_text(encoding="utf-8")
+    astrology = (HOSTING / "inc" / "astrology.php").read_text(encoding="utf-8")
+
+    assert "personal_horoscope" in schema
+    assert "horoscope_date" in schema
+    assert "horoscopo_personalizado" in form
+    assert "transit_date" in admin
+    assert "service_interpretation_prompt" in admin
+    assert "chart_context_for_ai" in admin
+    assert "No uses Markdown" in astrology

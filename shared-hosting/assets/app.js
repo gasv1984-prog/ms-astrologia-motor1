@@ -5,6 +5,19 @@ const basePath = (() => {
 })();
 const appUrl = (path) => `${basePath}/${String(path).replace(/^\//, '')}`;
 
+const serviceRequest = document.querySelector('[data-service-request]');
+if (serviceRequest) {
+  const fields = serviceRequest.querySelector('[data-personal-horoscope-fields]');
+  const radios = [...serviceRequest.querySelectorAll('[name="service_type"]')];
+  const refreshService = () => {
+    const personalized = radios.some((radio) => radio.checked && radio.value === 'personal_horoscope');
+    fields?.classList.toggle('is-visible', personalized);
+    fields?.querySelectorAll('select,input').forEach((field) => { field.required = personalized; });
+  };
+  radios.forEach((radio) => radio.addEventListener('change', refreshService));
+  refreshService();
+}
+
 const locationPicker = document.querySelector('[data-location-picker]');
 if (locationPicker) {
   const country = locationPicker.querySelector('.country-select');
