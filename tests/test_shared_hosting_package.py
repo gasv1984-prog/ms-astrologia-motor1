@@ -40,6 +40,9 @@ def test_github_engine_uses_official_ephemerides_and_counterclockwise_houses():
     assert "zodiac_direction: 'contrario a las manecillas del reloj'" in source
     assert "Nodo Sur verdadero" in source
     assert "southLongitude = normalize(north.longitude + 180)" in source
+    assert ">DSC</text>" in source
+    assert ">IC</text>" in source
+    assert "[1, 4, 7, 10].includes(house)" in source
 
     ephemeris = ROOT / "github-pages" / "motor" / "ephe"
     assert (ephemeris / "sepl_18.se1").stat().st_size > 400_000

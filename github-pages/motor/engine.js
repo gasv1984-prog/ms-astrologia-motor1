@@ -254,7 +254,8 @@ function renderChartSvg(subject, planets, houses, aspects) {
     const nextCusp = houses.cusps[house === 12 ? 1 : house + 1];
     const span = normalize(nextCusp - houses.cusps[house]);
     const [numberX, numberY] = polar(houses.cusps[house] + span / 2, ascendant, 173, center);
-    parts.push(`<line x1="${round(innerX, 2)}" y1="${round(innerY, 2)}" x2="${round(outerX, 2)}" y2="${round(outerY, 2)}" stroke="${house === 1 || house === 10 ? '#d8be77' : '#494158'}" stroke-width="${house === 1 || house === 10 ? 2.5 : 1}"/>`);
+    const isAngle = [1, 4, 7, 10].includes(house);
+    parts.push(`<line x1="${round(innerX, 2)}" y1="${round(innerY, 2)}" x2="${round(outerX, 2)}" y2="${round(outerY, 2)}" stroke="${isAngle ? '#d8be77' : '#494158'}" stroke-width="${isAngle ? 2.5 : 1}"/>`);
     parts.push(`<text x="${round(numberX, 2)}" y="${round(numberY + 5, 2)}" fill="#8f879c" font-size="13" text-anchor="middle">${house}</text>`);
   }
 
@@ -283,9 +284,13 @@ function renderChartSvg(subject, planets, houses, aspects) {
   }
 
   const [ascX, ascY] = polar(houses.ascendant, ascendant, 315, center);
+  const [dscX, dscY] = polar(normalize(houses.ascendant + 180), ascendant, 315, center);
   const [mcX, mcY] = polar(houses.mc, ascendant, 315, center);
+  const [icX, icY] = polar(normalize(houses.mc + 180), ascendant, 315, center);
   parts.push(`<text x="${round(ascX, 2)}" y="${round(ascY - 8, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">ASC</text>`);
+  parts.push(`<text x="${round(dscX, 2)}" y="${round(dscY - 8, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">DSC</text>`);
   parts.push(`<text x="${round(mcX, 2)}" y="${round(mcY - 8, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">MC</text>`);
+  parts.push(`<text x="${round(icX, 2)}" y="${round(icY + 18, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">IC</text>`);
 
   parts.push('<text x="360" y="338" fill="#d8be77" font-family="Georgia,serif" font-size="34" text-anchor="middle">MS</text>');
   parts.push(`<text x="360" y="371" fill="#f6f0e5" font-family="Georgia,serif" font-size="22" text-anchor="middle">${escapeXml(subject.name)}</text>`);
@@ -297,7 +302,7 @@ function renderChartSvg(subject, planets, houses, aspects) {
   parts.push('<line x1="730" y1="24" x2="730" y2="696" stroke="#393347"/>');
   parts.push(`<text x="758" y="48" fill="#f6f0e5" font-family="Georgia,serif" font-size="25">${escapeXml(subject.name)} · CARTA NATAL</text>`);
   parts.push(`<text x="758" y="72" fill="#8f879c" font-size="12">${escapeXml(subject.birthplace || '')} · ${escapeXml(subject.timezone)}</text>`);
-  parts.push('<text x="758" y="101" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">POSICIONES</text>');
+  parts.push('<text x="758" y="101" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">UBICACIONES IMPORTANTES</text>');
   const tablePlanets = planets.filter((planet) => !['mean_north_node', 'mean_south_node'].includes(planet.key));
   tablePlanets.forEach((planet, index) => {
     const y = 126 + index * 22;
@@ -313,6 +318,8 @@ function renderChartSvg(subject, planets, houses, aspects) {
     parts.push(`<text x="958" y="${y}" fill="#8f879c" font-size="11">Casa ${house}</text>`);
     parts.push(`<text x="1086" y="${y}" fill="#e7e0ed" font-size="11" text-anchor="end">${formatPosition(houses.cusps[house])}</text>`);
   }
+  parts.push(`<text x="958" y="400" fill="#8f879c" font-size="10">ASC / DSC</text><text x="1086" y="400" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(houses.ascendant)} / ${formatPosition(normalize(houses.ascendant + 180))}</text>`);
+  parts.push(`<text x="958" y="421" fill="#8f879c" font-size="10">MC / IC</text><text x="1086" y="421" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(houses.mc)} / ${formatPosition(normalize(houses.mc + 180))}</text>`);
 
   const elements = chartBalance.elements.percentages;
   const modalities = chartBalance.modalities.percentages;
@@ -321,7 +328,7 @@ function renderChartSvg(subject, planets, houses, aspects) {
   parts.push(`<text x="758" y="495" fill="#afa7bb" font-size="11">Fase lunar</text><text x="1088" y="495" fill="#e7e0ed" font-size="11" text-anchor="end">${escapeXml(phase.name)} · ${phase.illumination_percentage}%</text>`);
   parts.push(`<text x="758" y="516" fill="#afa7bb" font-size="11">Elementos</text><text x="1088" y="516" fill="#e7e0ed" font-size="10" text-anchor="end">F ${elements.fuego}% · T ${elements.tierra}% · A ${elements.aire}% · Ag ${elements.agua}%</text>`);
   parts.push(`<text x="758" y="537" fill="#afa7bb" font-size="11">Modalidades</text><text x="1088" y="537" fill="#e7e0ed" font-size="10" text-anchor="end">C ${modalities.cardinal}% · F ${modalities.fijo}% · M ${modalities.mutable}%</text>`);
-  parts.push(`<text x="758" y="558" fill="#afa7bb" font-size="11">Eje nodal verdadero</text><text x="1088" y="558" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(planetMap.get('true_north_node').longitude)} / ${formatPosition(planetMap.get('true_south_node').longitude)}</text>`);
+  parts.push(`<text x="758" y="558" fill="#afa7bb" font-size="11">Nodos del karma N / S</text><text x="1088" y="558" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(planetMap.get('true_north_node').longitude)} / ${formatPosition(planetMap.get('true_south_node').longitude)}</text>`);
   parts.push('<text x="758" y="589" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">ASPECTOS MÁS EXACTOS</text>');
   aspects.slice().sort((a, b) => a.orb - b.orb).slice(0, 6).forEach((aspect, index) => {
     const y = 614 + index * 17;

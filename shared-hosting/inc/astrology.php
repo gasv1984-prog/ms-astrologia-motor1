@@ -131,13 +131,33 @@ function chart_context_for_ai(array $chart): string
     $lines[] = 'Efemérides: ' . ($metadata['ephemeris'] ?? 'Swiss Ephemeris');
     $lines[] = 'Zodiaco: ' . ($metadata['zodiac'] ?? 'Tropical') . '; casas: ' . ($metadata['house_system'] ?? 'Placidus') . '.';
     $lines[] = 'UTC de nacimiento: ' . ($subject['utc'] ?? '') . '; día juliano: ' . ($subject['julian_day'] ?? '') . '.';
+    $importantKeys = [
+        'sun' => 'Luminar', 'moon' => 'Luminar',
+        'mercury' => 'Planeta personal', 'venus' => 'Planeta personal', 'mars' => 'Planeta personal',
+        'jupiter' => 'Planeta social', 'saturn' => 'Planeta social',
+        'uranus' => 'Planeta transpersonal', 'neptune' => 'Planeta transpersonal', 'pluto' => 'Planeta transpersonal',
+        'true_north_node' => 'Nodo del karma', 'true_south_node' => 'Nodo del karma',
+    ];
+    $lines[] = '';
+    $lines[] = 'UBICACIONES IMPORTANTES';
+    foreach (($chart['angles'] ?? []) as $point) {
+        $sign = $point['sign'] ?? [];
+        $displayName = ($point['key'] ?? '') === 'imum_coeli' ? 'Bajo Cielo / Fondo del Cielo (IC)' : ($point['name'] ?? $point['key']);
+        $lines[] = sprintf('%s: %02d° %02d′ %02d″ de %s (%.6f°).', $displayName, (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), $sign['name'] ?? '', (float)($point['longitude'] ?? 0));
+    }
+    foreach ($chart['planets'] as $planet) {
+        $key = (string)($planet['key'] ?? '');
+        if (!isset($importantKeys[$key])) { continue; }
+        $sign = $planet['sign'] ?? [];
+        $lines[] = sprintf('%s (%s): %02d° %02d′ %02d″ de %s; casa %s%s.', $planet['name'] ?? $key, $importantKeys[$key], (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), $sign['name'] ?? '', $planet['house'] ?? '—', !empty($planet['retrograde']) ? '; retrógrado' : '');
+    }
     $lines[] = '';
     $lines[] = 'POSICIONES NATALES';
     foreach ($chart['planets'] as $planet) {
         $sign = $planet['sign'] ?? [];
         $position = sprintf('%02d° %02d′ %02d″ de %s', (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), (string)($sign['name'] ?? ''));
         $motion = !empty($planet['retrograde']) ? ' retrógrado' : ' directo';
-        $lines[] = sprintf('%s: %s; casa %s;%s; longitud %.6f°; velocidad %.6f°/día.', $planet['name'] ?? $planet['key'], $position, $planet['house'] ?? '—', $motion, (float)($planet['longitude'] ?? 0), (float)($planet['longitude_speed'] ?? 0));
+        $lines[] = sprintf('%s (%s): %s; casa %s;%s; longitud %.6f°; velocidad %.6f°/día.', $planet['name'] ?? $planet['key'], $planet['category'] ?? 'punto', $position, $planet['house'] ?? '—', $motion, (float)($planet['longitude'] ?? 0), (float)($planet['longitude_speed'] ?? 0));
     }
     if (is_array($chart['angles'] ?? null)) {
         $lines[] = '';
@@ -214,7 +234,8 @@ function service_interpretation_prompt(array $item, string $context): string
     return "Redacta una lectura natal profesional, profunda y personalizada para {$name}. "
         . $common
         . "Extensión: 1400 a 2200 palabras. Integra contradicciones y repeticiones del mapa; no describas cada posición de forma aislada. "
-        . "Secciones obligatorias: RETRATO CENTRAL, SOL LUNA Y ASCENDENTE, MENTE DESEO Y ACCIÓN, VÍNCULOS Y AFECTIVIDAD, VOCACIÓN Y DIRECCIÓN, RECURSOS Y FORTALEZAS, TENSIONES Y APRENDIZAJES, NODOS LILITH Y QUIRÓN, INTEGRACIÓN PERSONAL, PREGUNTAS PARA TU PROCESO.\n\n"
+        . "Incluye las ubicaciones concretas de Ascendente, Descendente, Medio Cielo, Bajo Cielo, nodos Norte y Sur, Sol, Luna, planetas personales y transpersonales. "
+        . "Secciones obligatorias: RETRATO CENTRAL, UBICACIONES IMPORTANTES, SOL LUNA Y ASCENDENTE, MENTE DESEO Y ACCIÓN, VÍNCULOS Y AFECTIVIDAD, VOCACIÓN Y DIRECCIÓN, RECURSOS Y FORTALEZAS, TENSIONES Y APRENDIZAJES, NODOS DEL KARMA LILITH Y QUIRÓN, INTEGRACIÓN PERSONAL, PREGUNTAS PARA TU PROCESO.\n\n"
         . "DATOS DE {$name}: {$item['birth_date']} {$item['birth_time']}, {$item['birthplace']} ({$item['latitude']}, {$item['longitude']}, {$item['timezone']}).\n"
         . "NOTAS APORTADAS: " . ((string)($item['notes'] ?? '') ?: 'ninguna') . ".\n\nDATOS TÉCNICOS VERIFICADOS:\n{$context}";
 }
