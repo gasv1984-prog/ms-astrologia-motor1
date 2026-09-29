@@ -116,6 +116,9 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
     assert "service-numeros-dia-v1.png" in home
     assert "service-numerologia-v1.png" in home
     assert "service-carta-astral-v1.png" in home
+    assert home.count("service-numerologia-v1.png") >= 2
+    assert home.count("service-carta-astral-v1.png") >= 3
+    assert "method-card-visual" in home
     assert "lottery-results" in home
     assert "logo-ms-numerologia.png" in home
     assert "youtube.com/embed/wum8hs6AV2w" in home
