@@ -59,6 +59,9 @@ CREATE TABLE IF NOT EXISTS astrology_configs (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT IGNORE INTO astrology_configs (id, mode, base_url, encrypted_api_key)
+VALUES (1, 'github_pages', 'https://gasv1984-prog.github.io/ms-astrologia-motor1/motor', NULL);
+
 CREATE TABLE IF NOT EXISTS ai_configs (
   provider ENUM('openai','gemini') PRIMARY KEY,
   encrypted_api_key TEXT NOT NULL,

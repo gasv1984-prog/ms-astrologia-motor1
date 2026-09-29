@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 return [
-    'app_url' => 'https://msastrologia.xyz',
+    'app_url' => 'https://miguelsalazarastrologia.com',
     'app_secret' => 'CAMBIA_ESTO_POR_UN_SECRETO_LARGO_Y_ALEATORIO',
     'db' => [
         'host' => 'localhost',

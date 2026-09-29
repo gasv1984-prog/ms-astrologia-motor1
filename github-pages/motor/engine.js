@@ -7,16 +7,18 @@ import {
   CalculationFlag,
 } from './vendor/swisseph-browser.js';
 
-const ENGINE_VERSION = '2.2.0';
+const ENGINE_VERSION = '2.2.1';
 const statusNode = document.getElementById('status');
 const allowedOrigins = new Set([
   'https://msastrologia.xyz',
   'https://www.msastrologia.xyz',
+  'https://miguelsalazarastrologia.com',
+  'https://www.miguelsalazarastrologia.com',
   'http://127.0.0.1:8000',
   'http://localhost:8000',
 ]);
 const parentOrigin = new URLSearchParams(location.search).get('parent_origin');
-if (parentOrigin && /^(https:\/\/([a-z0-9-]+\.)?msastrologia\.xyz|http:\/\/(127\.0\.0\.1|localhost)(:\d+)?)$/i.test(parentOrigin)) {
+if (parentOrigin && /^(https:\/\/((www\.)?msastrologia\.xyz|(www\.)?miguelsalazarastrologia\.com)|http:\/\/(127\.0\.0\.1|localhost)(:\d+)?)$/i.test(parentOrigin)) {
   allowedOrigins.add(parentOrigin);
 }
 

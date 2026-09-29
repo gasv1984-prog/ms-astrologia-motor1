@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@700&display=swap');
+
 :root {
   --ink: #f7f4ed;
   --muted: #aaa8bc;
@@ -6,8 +8,8 @@
   --surface: #171526;
   --surface-2: #201d32;
   --line: rgba(255,255,255,.11);
-  --gold: #d8b66f;
-  --gold-light: #f0d79d;
+  --gold: #d4af37;
+  --gold-light: #fcf1b2;
   --violet: #766eb4;
   --success: #70c79b;
   --danger: #e38a91;
@@ -42,14 +44,17 @@ a { color: inherit; }
 button, input, select, textarea { font: inherit; }
 button, a { -webkit-tap-highlight-color: transparent; }
 
-.topbar { height: 76px; padding: 0 clamp(20px, 5vw, 72px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: rgba(13,12,25,.82); backdrop-filter: blur(18px); position: relative; z-index: 10; }
+.topbar { min-height: 82px; padding: 10px clamp(20px, 5vw, 72px); display: flex; align-items: center; justify-content: space-between; gap: 28px; border-bottom: 1px solid rgba(212,175,55,.16); background: rgba(5,5,7,.88); backdrop-filter: blur(18px); position: relative; z-index: 10; }
 .brand { display: flex; align-items: center; text-decoration: none; }
-.brand-logo { width: 132px; height: 50px; padding: 3px 10px; display: block; object-fit: contain; background: #fff; border-radius: 9px; }
+.brand-logo { width: 105px; height: 58px; padding: 3px 8px; display: block; object-fit: contain; background: #fff; border-radius: 12px; }
+.brand-copy { display: grid; margin-left: 13px; gap: 2px; }
+.brand-copy strong { color: var(--gold-light); font: 700 .92rem/1.1 Cinzel, Georgia, serif; letter-spacing: .08em; text-transform: uppercase; }
+.brand-copy small { color: var(--muted); font-size: .66rem; letter-spacing: .08em; }
 .quiet-link, .admin-nav a, .link-button { color: var(--muted); font-size: .9rem; text-decoration: none; transition: color .2s; }
 .quiet-link:hover, .admin-nav a:hover, .link-button:hover { color: var(--ink); }
 .admin-nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); }
 .public-nav { display: flex; align-items: center; gap: clamp(15px, 2.4vw, 34px); }
-.public-nav a { color: var(--muted); font-size: .88rem; text-decoration: none; transition: color .2s; }
+.public-nav a { color: var(--muted); font-size: .8rem; font-weight: 600; letter-spacing: .03em; text-decoration: none; transition: color .2s; }
 .public-nav a:hover { color: var(--gold-light); }
 .admin-nav form { margin: 0; }
 .link-button { border: 0; background: none; padding: 0; cursor: pointer; }
@@ -466,6 +471,110 @@ td small { margin-top: 5px; }
   body::before, body::after, .cinematic-light, .cinematic-grain, .brand-wheel, .payment-orbit, .zodiac-orbit, .zodiac-symbols, .zodiac-stars { animation: none !important; }
   .motion-ready .reveal { opacity: 1 !important; transform: none !important; }
   .service-card, .brand-hero-art { transform: none !important; }
+}
+
+/* Portada unificada: identidad visual del proyecto MS Numerología */
+.unified-home { background: radial-gradient(ellipse at 50% 0%, #211d15 0, #08080a 42rem, #030304 100%); }
+.unified-home h1, .unified-home h2, .unified-home h3 { font-family: Cinzel, Georgia, serif; }
+.ms-home-hero { min-height: 760px; position: relative; isolation: isolate; overflow: hidden; display: grid; place-items: center; padding: clamp(70px, 8vw, 118px) 24px; border-bottom: 1px solid rgba(212,175,55,.16); text-align: center; }
+.ms-home-hero-bg { position: absolute; inset: 0; z-index: -2; background: linear-gradient(180deg, rgba(5,5,7,.7), rgba(5,5,7,.78) 55%, #050507 100%), url('miguel-banner.png') center 18% / cover no-repeat; transform: scale(1.035); animation: ms-hero-breathe 14s ease-in-out infinite alternate; }
+.ms-home-hero::before { content: ""; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 50% 32%, rgba(212,175,55,.13), transparent 34rem), linear-gradient(90deg, rgba(0,0,0,.44), transparent 25%, transparent 75%, rgba(0,0,0,.44)); }
+.ms-home-hero-content { width: min(1120px, 100%); display: grid; justify-items: center; }
+.ms-home-logo { width: min(190px, 44vw); max-height: 132px; object-fit: contain; margin-bottom: 23px; filter: drop-shadow(0 0 26px rgba(212,175,55,.38)); animation: ms-logo-float 6s ease-in-out infinite; }
+.ms-home-hero .eyebrow { margin-bottom: 15px; }
+.ms-home-hero h1 { margin: 0; font-size: clamp(3.6rem, 8vw, 7.4rem); line-height: .95; letter-spacing: .04em; text-transform: uppercase; background: linear-gradient(135deg, #a9781d, #fff4b7 38%, #c49125 68%, #fff0a8); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 12px 46px rgba(0,0,0,.6); }
+.ms-home-lead { width: min(730px, 100%); margin: 24px auto 0; color: #c4c1ca; font-size: clamp(1rem, 1.65vw, 1.25rem); line-height: 1.75; }
+.consultation-choices { width: min(960px, 100%); margin-top: 42px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.consultation-choice { min-height: 112px; padding: 19px 22px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; border: 1px solid rgba(212,175,55,.34); border-radius: 19px; color: #fff; background: linear-gradient(145deg, rgba(30,30,30,.83), rgba(8,8,9,.94)); box-shadow: 0 18px 45px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.04); text-align: left; text-decoration: none; transition: transform .3s, border-color .3s, box-shadow .3s; }
+.consultation-choice:hover { transform: translateY(-5px); border-color: rgba(252,241,178,.74); box-shadow: 0 24px 55px rgba(0,0,0,.58), 0 0 34px rgba(212,175,55,.12); }
+.consultation-choice .choice-icon { width: 60px; height: 60px; display: grid; place-items: center; border: 1px solid rgba(212,175,55,.38); border-radius: 16px; color: var(--gold-light); background: rgba(212,175,55,.08); font: 2rem Cinzel, Georgia, serif; }
+.consultation-choice small { margin-bottom: 7px; color: #918e98; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+.consultation-choice strong { display: block; color: #fff8e4; font: 700 clamp(1rem, 1.6vw, 1.22rem)/1.25 Cinzel, Georgia, serif; }
+.consultation-choice b { color: var(--gold-light); font-size: 1.35rem; }
+.astrology-choice { background: linear-gradient(145deg, rgba(43,31,60,.88), rgba(10,8,16,.96)); }
+.home-quick-links { margin-top: 25px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 27px; }
+.home-quick-links a { color: #aaa6b1; font-size: .78rem; text-decoration: none; border-bottom: 1px solid transparent; }
+.home-quick-links a:hover { color: var(--gold-light); border-color: currentColor; }
+.ms-guide-section { width: min(1260px, calc(100% - 48px)); margin: clamp(80px, 9vw, 138px) auto; display: grid; grid-template-columns: minmax(320px, .75fr) minmax(0, 1.25fr); gap: clamp(45px, 8vw, 110px); align-items: stretch; }
+.ms-guide-photo { min-height: 610px; position: relative; overflow: hidden; border: 1px solid rgba(212,175,55,.22); border-radius: 28px; background: #0b0b0d; box-shadow: 0 28px 70px rgba(0,0,0,.42); }
+.ms-guide-photo::after { content: "+15 años de experiencia"; position: absolute; left: 24px; bottom: 24px; padding: 9px 14px; border-radius: 999px; color: #16130c; background: var(--gold); font-size: .69rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.ms-guide-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 1s ease; }
+.ms-guide-photo:hover img { transform: scale(1.035); }
+.ms-guide-copy { align-self: center; }
+.ms-guide-copy > h2, .lottery-heading h2, .social-band h2 { margin: 13px 0 22px; font-size: clamp(2.5rem, 5vw, 4.9rem); line-height: 1.02; letter-spacing: -.045em; }
+.ms-guide-copy > p, .lottery-heading > p, .social-band p { color: var(--muted); font-size: 1rem; line-height: 1.75; }
+.method-grid { margin-top: 38px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.method-grid article { min-height: 285px; padding: 27px; display: flex; flex-direction: column; border: 1px solid rgba(212,175,55,.16); border-radius: 19px; background: linear-gradient(145deg, rgba(30,30,30,.7), rgba(8,8,9,.9)); }
+.method-grid article > span { color: var(--gold); font: 700 .72rem Space Mono, monospace; }
+.method-grid h3 { margin: 29px 0 12px; color: #fff8e5; font-size: 1.55rem; }
+.method-grid p { margin: 0; color: var(--muted); line-height: 1.65; font-size: .88rem; }
+.method-grid a { margin-top: auto; padding-top: 24px; color: var(--gold-light); font-weight: 700; text-decoration: none; }
+.precision-band { width: min(1380px, calc(100% - 48px)); margin: 0 auto clamp(90px, 10vw, 140px); display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid rgba(212,175,55,.16); border-radius: 21px; overflow: hidden; background: rgba(14,14,16,.72); backdrop-filter: blur(14px); }
+.precision-band div { min-height: 132px; padding: 27px; display: grid; align-content: center; gap: 9px; border-right: 1px solid rgba(212,175,55,.13); }
+.precision-band div:last-child { border-right: 0; }
+.precision-band strong { color: #fff7df; font: 600 1.05rem Cinzel, Georgia, serif; }
+.precision-band span { color: #88858f; font-size: .77rem; line-height: 1.55; }
+.lottery-section { width: min(1260px, calc(100% - 48px)); margin: 0 auto clamp(90px, 10vw, 140px); }
+.lottery-heading { margin-bottom: 32px; display: grid; grid-template-columns: 1fr .75fr; gap: 48px; align-items: end; }
+.lottery-heading h2 { margin-bottom: 0; }
+.lottery-heading > p { margin: 0; }
+.lottery-filters { padding: 25px; display: grid; grid-template-columns: 1fr 1fr auto; gap: 16px; align-items: end; border: 1px solid rgba(212,175,55,.2); border-radius: 20px; background: linear-gradient(145deg, rgba(30,30,30,.72), rgba(8,8,9,.9)); }
+.lottery-filters label { color: var(--gold); font-size: .7rem; letter-spacing: .12em; text-transform: uppercase; }
+.lottery-filters .primary-button { min-width: 230px; }
+.lottery-status { min-height: 22px; margin: 20px 2px; color: #918e98; font-size: .82rem; }
+.lottery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.lottery-card { min-height: 190px; padding: 25px; display: grid; justify-items: center; align-content: center; border: 1px solid rgba(212,175,55,.16); border-top: 3px solid var(--gold); border-radius: 16px; background: linear-gradient(145deg, rgba(30,30,30,.72), rgba(8,8,9,.94)); text-align: center; }
+.lottery-card small { color: #77747d; }
+.lottery-card h3 { margin: 10px 0 20px; color: var(--gold); font-size: .82rem; text-transform: uppercase; }
+.lottery-card strong { color: #fff; font: 700 2.4rem Space Mono, monospace; letter-spacing: .12em; }
+.lottery-card span { margin-top: 13px; padding: 5px 10px; color: var(--gold-light); border: 1px solid rgba(212,175,55,.25); border-radius: 8px; font-size: .73rem; }
+.social-band { width: min(1120px, calc(100% - 48px)); margin: 0 auto clamp(95px, 10vw, 145px); padding: clamp(28px, 5vw, 62px); display: grid; grid-template-columns: 310px 1fr; align-items: center; gap: clamp(40px, 7vw, 90px); border: 1px solid rgba(212,175,55,.2); border-radius: 28px; background: linear-gradient(145deg, rgba(30,30,30,.72), rgba(8,8,9,.94)); }
+.social-band > img { width: 100%; aspect-ratio: 1; object-fit: cover; object-position: top; border: 1px solid rgba(212,175,55,.24); border-radius: 50%; filter: saturate(.92); }
+.social-band h2 { font-size: clamp(2.2rem, 4vw, 4rem); }
+.social-links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
+.social-links a { padding: 10px 14px; color: var(--gold-light); border: 1px solid rgba(212,175,55,.28); border-radius: 999px; text-decoration: none; font-size: .77rem; font-weight: 700; }
+.social-links a:hover { color: #111; background: var(--gold); }
+.floating-whatsapp { position: fixed; z-index: 30; right: 22px; bottom: 22px; min-width: 58px; min-height: 58px; padding: 0 18px; display: flex; align-items: center; justify-content: center; gap: 9px; color: white; background: #20b85a; border-radius: 999px; box-shadow: 0 12px 35px rgba(32,184,90,.34); text-decoration: none; font-weight: 800; transition: transform .2s; }
+.floating-whatsapp:hover { transform: translateY(-3px) scale(1.02); }
+.floating-whatsapp span { font-size: .76rem; }
+@keyframes ms-hero-breathe { to { transform: scale(1.075) translateY(-8px); } }
+@keyframes ms-logo-float { 50% { transform: translateY(-8px); } }
+
+@media (max-width: 1050px) {
+  .topbar { align-items: flex-start; }
+  .public-nav { justify-content: flex-end; flex-wrap: wrap; gap: 9px 18px; }
+  .ms-guide-section { grid-template-columns: .82fr 1.18fr; }
+  .precision-band { grid-template-columns: 1fr 1fr; }
+  .precision-band div:nth-child(2) { border-right: 0; }
+  .precision-band div:nth-child(-n+2) { border-bottom: 1px solid rgba(212,175,55,.13); }
+}
+@media (max-width: 780px) {
+  .topbar { min-height: auto; padding: 11px 18px; align-items: center; }
+  .brand-copy { display: none; }
+  .brand-logo { width: 84px; height: 48px; }
+  .public-nav { display: none; }
+  .ms-home-hero { min-height: 720px; padding-top: 72px; }
+  .ms-home-hero h1 { font-size: clamp(3rem, 15vw, 5.2rem); }
+  .consultation-choices, .ms-guide-section, .method-grid, .lottery-heading, .social-band { grid-template-columns: 1fr; }
+  .consultation-choice { min-height: 102px; padding: 16px; gap: 13px; }
+  .consultation-choice .choice-icon { width: 52px; height: 52px; }
+  .ms-guide-photo { min-height: 490px; }
+  .precision-band { grid-template-columns: 1fr; }
+  .precision-band div { min-height: 105px; border-right: 0; border-bottom: 1px solid rgba(212,175,55,.13); }
+  .precision-band div:last-child { border-bottom: 0; }
+  .lottery-filters { grid-template-columns: 1fr; }
+  .lottery-filters .primary-button { min-width: 0; }
+  .lottery-grid { grid-template-columns: 1fr 1fr; }
+  .social-band > img { width: min(280px, 100%); justify-self: center; }
+  .floating-whatsapp span { display: none; }
+  .floating-whatsapp { width: 58px; padding: 0; }
+}
+@media (max-width: 520px) {
+  .ms-home-hero { min-height: 760px; }
+  .consultation-choice { grid-template-columns: auto 1fr; }
+  .consultation-choice b { display: none; }
+  .ms-guide-section, .precision-band, .lottery-section, .social-band { width: min(100% - 28px, 1260px); }
+  .lottery-grid { grid-template-columns: 1fr; }
 }
 .personal-horoscope-fields{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:20px;border:1px solid rgba(216,190,119,.28);border-radius:18px;background:rgba(216,190,119,.05)}
 .personal-horoscope-fields.is-visible{display:grid;animation:reveal-up .35s ease both}.personal-horoscope-fields .full{grid-column:1/-1}.service-choice{border:0;padding:0;margin:0}.service-choice legend{font-weight:700;margin-bottom:12px}

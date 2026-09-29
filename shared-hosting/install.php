@@ -121,7 +121,7 @@ function existingInstallation(array $config): bool
 $installed = existingInstallation(is_array($existing) ? $existing : []);
 $error = null;
 $success = null;
-$defaultUrl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'msastrologia.xyz');
+$defaultUrl = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'miguelsalazarastrologia.com');
 $existingUrl = (string)($existing['app_url'] ?? '');
 $existingDbName = (string)($existing['db']['name'] ?? '');
 $existingDbUser = (string)($existing['db']['user'] ?? '');
@@ -221,8 +221,8 @@ if (empty($_SESSION['csrf'])) {
 }
 ?><!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Instalar MS Astrologia</title><link rel="stylesheet" href="assets/styles.css"><link rel="icon" href="assets/ms-logo.png"></head>
-<body><header class="topbar"><a class="brand" href="./"><img class="brand-logo" src="assets/ms-logo.png" alt="Miguel Salazar Colombia"></a></header><main>
+<title>Instalar Miguel Salazar Astrología</title><link rel="stylesheet" href="assets/styles.css?v=0.8.0"><link rel="icon" href="assets/logo-ms-numerologia.png"></head>
+<body><header class="topbar"><a class="brand" href="./"><img class="brand-logo" src="assets/logo-ms-numerologia.png" alt="Miguel Salazar"></a></header><main>
 <section class="center-card"><div class="eyebrow">Instalador automatico</div><h1>MS Astrologia</h1>
 <?php if ($error): ?><div class="alert error"><strong>No se pudo instalar</strong><br><?= h($error) ?></div><?php endif; ?>
 <?php if ($success): ?><div class="alert success"><?= h($success) ?></div><?php endif; ?>
@@ -237,7 +237,7 @@ if (empty($_SESSION['csrf'])) {
 <label>Contrasena MySQL<input type="password" name="db_password" required autocomplete="new-password"><small>Es la contrasena creada en Bases de datos de Hostinger.</small></label>
 <label>Usuario administrador<input name="admin_username" required minlength="3" value="<?= h($values['admin_username']) ?>"></label>
 <label>Contrasena del administrador<input type="password" name="admin_password" required minlength="12" autocomplete="new-password"><small>Debe ser distinta de la contrasena MySQL.</small></label>
-<label>Correo remitente <small>opcional</small><input type="email" name="mail_from" value="<?= h($values['mail_from']) ?>" placeholder="resultados@msastrologia.xyz"></label>
+<label>Correo remitente <small>opcional</small><input type="email" name="mail_from" value="<?= h($values['mail_from']) ?>" placeholder="resultados@miguelsalazarastrologia.com"></label>
 <button class="primary-button"><span>Instalar todo automaticamente</span><span>→</span></button></form>
 <p class="data-credit">La importacion de 235.877 localidades puede tardar uno o dos minutos. No cierres la pagina durante el proceso.</p><?php endif; ?></section>
 </main><footer><span>MS Astrologia</span><span>Instalacion segura para Hostinger</span></footer></body></html>

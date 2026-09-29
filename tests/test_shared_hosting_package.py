@@ -93,3 +93,23 @@ def test_personal_horoscope_keeps_natal_calculation_and_transits():
     assert "service_interpretation_prompt" in admin
     assert "chart_context_for_ai" in admin
     assert "No uses Markdown" in astrology
+
+
+def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
+    home = (HOSTING / "index.php").read_text(encoding="utf-8")
+    bootstrap = (HOSTING / "inc" / "bootstrap.php").read_text(encoding="utf-8")
+    schema = (HOSTING / "database" / "schema.sql").read_text(encoding="utf-8")
+    engine = (ROOT / "github-pages" / "motor" / "engine.js").read_text(encoding="utf-8")
+
+    assert "Consulta de numerología" in home
+    assert "Consulta de carta astral" in home
+    assert "lottery-results" in home
+    assert "logo-ms-numerologia.png" in home
+    assert "miguelsalazarastrologia.com" in bootstrap
+    assert "https://miguelsalazarastrologia.com" in engine
+    assert "https://www.miguelsalazarastrologia.com" in engine
+    assert "INSERT IGNORE INTO astrology_configs" in schema
+    assert "https://gasv1984-prog.github.io/ms-astrologia-motor1/motor" in schema
+
+    for name in ("logo-ms-numerologia.png", "miguel-banner.png", "miguel-pointing.png", "miguel-profile.png"):
+        assert (HOSTING / "assets" / name).stat().st_size > 10_000
