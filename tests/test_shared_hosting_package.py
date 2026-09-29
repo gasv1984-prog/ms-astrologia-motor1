@@ -110,6 +110,10 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
     assert "Números del día" in home
     assert "Historias de transformación" in home
     assert "Consultar mi horóscopo" in home
+    assert "service-mensajes-positivos-v1.png" in home
+    assert "service-ritual-limpieza-v1.png" in home
+    assert "service-estudio-numerologico-v1.png" in home
+    assert "service-numeros-dia-v1.png" in home
     assert "service-numerologia-v1.png" in home
     assert "service-carta-astral-v1.png" in home
     assert "lottery-results" in home
@@ -140,5 +144,9 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
         "miguel-profile.png",
         "service-numerologia-v1.png",
         "service-carta-astral-v1.png",
+        "service-mensajes-positivos-v1.png",
+        "service-ritual-limpieza-v1.png",
+        "service-estudio-numerologico-v1.png",
+        "service-numeros-dia-v1.png",
     ):
         assert (HOSTING / "assets" / name).stat().st_size > 10_000
