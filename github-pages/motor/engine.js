@@ -7,7 +7,7 @@ import {
   CalculationFlag,
 } from './vendor/swisseph-browser.js';
 
-const ENGINE_VERSION = '2.1.0';
+const ENGINE_VERSION = '2.2.0';
 const statusNode = document.getElementById('status');
 const allowedOrigins = new Set([
   'https://msastrologia.xyz',
@@ -105,7 +105,9 @@ function zodiacPosition(longitude) {
   const minute = Math.floor(minuteFloat);
   const second = Math.round((minuteFloat - minute) * 60);
   const [key, name, symbol, element, modality] = zodiac[index];
-  return { key, name, symbol, element, modality, index, degree, minute, second };
+  const decanate = Math.min(3, Math.floor(within / 10) + 1);
+  const decanateRanges = ['0°00′–9°59′', '10°00′–19°59′', '20°00′–29°59′'];
+  return { key, name, symbol, element, modality, index, degree, minute, second, decanate, decanate_range: decanateRanges[decanate - 1] };
 }
 
 function houseForLongitude(longitude, cusps) {

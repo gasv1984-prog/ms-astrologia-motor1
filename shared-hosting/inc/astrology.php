@@ -145,11 +145,17 @@ function chart_context_for_ai(array $chart): string
         $displayName = ($point['key'] ?? '') === 'imum_coeli' ? 'Bajo Cielo / Fondo del Cielo (IC)' : ($point['name'] ?? $point['key']);
         $lines[] = sprintf('%s: %02d° %02d′ %02d″ de %s (%.6f°).', $displayName, (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), $sign['name'] ?? '', (float)($point['longitude'] ?? 0));
     }
+    $solarDecanate = null;
     foreach ($chart['planets'] as $planet) {
         $key = (string)($planet['key'] ?? '');
         if (!isset($importantKeys[$key])) { continue; }
         $sign = $planet['sign'] ?? [];
         $lines[] = sprintf('%s (%s): %02d° %02d′ %02d″ de %s; casa %s%s.', $planet['name'] ?? $key, $importantKeys[$key], (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0), $sign['name'] ?? '', $planet['house'] ?? '—', !empty($planet['retrograde']) ? '; retrógrado' : '');
+        if ($key === 'sun') {
+            $degreeWithinSign = (float)($sign['degree'] ?? 0) + ((float)($sign['minute'] ?? 0) / 60.0) + ((float)($sign['second'] ?? 0) / 3600.0);
+            $solarDecanate = zodiac_decanate($degreeWithinSign);
+            $lines[] = sprintf('DECANATO SOLAR VERIFICADO: %s de %s (%s), calculado con el Sol a %02d° %02d′ %02d″.', $solarDecanate['label'], $sign['name'] ?? '', $solarDecanate['range'], (int)($sign['degree'] ?? 0), (int)($sign['minute'] ?? 0), (int)($sign['second'] ?? 0));
+        }
     }
     $lines[] = '';
     $lines[] = 'POSICIONES NATALES';
@@ -227,6 +233,7 @@ function service_interpretation_prompt(array $item, string $context): string
         return "Redacta un horóscopo PERSONALIZADO {$period} para {$name}, con fecha de referencia {$item['horoscope_date']}. "
             . $common
             . "No redactes un horóscopo general por signo solar: interpreta los tránsitos calculados sobre su carta natal y prioriza los aspectos de menor orbe. "
+            . "Integra expresamente el DECANATO SOLAR VERIFICADO incluido en los datos técnicos y explica cómo matiza su signo solar, sin usarlo como sustituto de la carta completa. "
             . "Enfoque solicitado por la persona: " . ((string)($item['horoscope_focus'] ?? '') ?: 'visión integral del período') . ". "
             . "Extensión: 900 a 1400 palabras. Secciones obligatorias: CLIMA PERSONAL DEL PERÍODO, TRÁNSITOS CENTRALES, VÍNCULOS, TRABAJO Y RECURSOS, BIENESTAR Y RITMO, FECHAS Y DECISIONES A OBSERVAR, ORIENTACIÓN PARA INTEGRAR EL CICLO.\n\n"
             . "DATOS DE {$name}: {$item['birth_date']} {$item['birth_time']}, {$item['birthplace']} ({$item['timezone']}).\n\nDATOS TÉCNICOS VERIFICADOS:\n{$context}";

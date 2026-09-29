@@ -3,7 +3,16 @@ from types import SimpleNamespace
 from fastapi.testclient import TestClient
 
 from app import db
+from app.astrology import build_horoscope_prompt
 from app.main import app
+
+
+def test_horoscope_prompt_covers_the_three_decanates():
+    prompt = build_horoscope_prompt("Leo", "Semanal", "Semana de prueba")
+    assert "PRIMER DECANATO · 0°00′ A 9°59′" in prompt
+    assert "SEGUNDO DECANATO · 10°00′ A 19°59′" in prompt
+    assert "TERCER DECANATO · 20°00′ A 29°59′" in prompt
+    assert "grado exacto del Sol natal" in prompt
 
 
 def test_horoscope_draft_publish_and_public_query(tmp_path, monkeypatch):
@@ -55,4 +64,4 @@ def test_horoscope_draft_publish_and_public_query(tmp_path, monkeypatch):
         assert login.status_code == 303
         admin_page = client.get("/admin/horoscopos")
         assert admin_page.status_code == 200
-        assert "Generar un nuevo borrador" in admin_page.text
+        assert "Generar nuevos borradores" in admin_page.text

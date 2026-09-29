@@ -56,6 +56,8 @@ window.addEventListener('message', (event) => {
       cusp_sign_sequence: data.houses.details.slice(0, 4).map((house) => `${house.house}:${house.sign.name}`),
       houses_advance_counterclockwise: data.houses.details.every((house, index, rows) => index === 0 || (mod360(house.longitude - rows[index - 1].longitude) > 0 && mod360(house.longitude - rows[index - 1].longitude) < 90)),
       planet_house_consistency: data.planets.every((planet) => planet.house === houseFor(planet.longitude, data.houses.cusps)),
+      solar_decanate: byKey.sun.sign.decanate,
+      solar_decanate_range: byKey.sun.sign.decanate_range,
       true_node_axis: mod360(byKey.true_south_node.longitude - byKey.true_north_node.longitude),
       mean_node_axis: mod360(byKey.mean_south_node.longitude - byKey.mean_north_node.longitude),
       transit_count: data.transits?.planets?.length || 0,
@@ -71,7 +73,7 @@ window.addEventListener('message', (event) => {
       };
     }
     const referenceOk = !report.reference_match || Object.values(report.reference_match).every(Boolean);
-    document.getElementById('status').textContent = report.true_node_axis === 180 && report.mean_node_axis === 180 && report.houses_advance_counterclockwise && report.planet_house_consistency && referenceOk ? 'PRUEBA CORRECTA' : 'PRUEBA FALLIDA';
+    document.getElementById('status').textContent = report.true_node_axis === 180 && report.mean_node_axis === 180 && report.houses_advance_counterclockwise && report.planet_house_consistency && [1, 2, 3].includes(report.solar_decanate) && referenceOk ? 'PRUEBA CORRECTA' : 'PRUEBA FALLIDA';
     document.getElementById('result').textContent = JSON.stringify(report, null, 2);
     document.getElementById('chart').innerHTML = event.data.svg;
   }

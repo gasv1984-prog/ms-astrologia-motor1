@@ -29,6 +29,23 @@ def test_horoscope_publish_query_does_not_compare_mixed_parameters():
     assert "$status === 'published'" in source
 
 
+def test_horoscope_generator_supports_all_signs_and_decanates():
+    admin = (HOSTING / "admin" / "horoscopos.php").read_text(encoding="utf-8")
+    public = (HOSTING / "horoscopo.php").read_text(encoding="utf-8")
+    astrology = (HOSTING / "inc" / "astrology.php").read_text(encoding="utf-8")
+    bootstrap = (HOSTING / "inc" / "bootstrap.php").read_text(encoding="utf-8")
+
+    assert '<option value="all">' in admin
+    assert "$sign === 'all' ? array_keys($signs)" in admin
+    assert "PRIMER DECANATO · 0°00′ A 9°59′" in admin
+    assert "SEGUNDO DECANATO · 10°00′ A 19°59′" in admin
+    assert "TERCER DECANATO · 20°00′ A 29°59′" in admin
+    assert "Los tres decanatos de cada signo" in public
+    assert "DECANATO SOLAR VERIFICADO" in astrology
+    assert "Integra expresamente el DECANATO SOLAR VERIFICADO" in astrology
+    assert "function zodiac_decanate" in bootstrap
+
+
 def test_github_engine_uses_official_ephemerides_and_counterclockwise_houses():
     source = (ROOT / "github-pages" / "motor" / "engine.js").read_text(encoding="utf-8")
 
@@ -45,6 +62,7 @@ def test_github_engine_uses_official_ephemerides_and_counterclockwise_houses():
     assert "[1, 4, 7, 10].includes(house)" in source
     assert "Nunca alterar la longitud" in source
     assert 'data-house=' in source
+    assert 'decanate_range' in source
     assert 'UBICACIÓN' in source
     assert 'COORDENADAS' in source
 

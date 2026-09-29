@@ -3,17 +3,18 @@
 {% block body_class %}admin-page{% endblock %}
 {% block content %}
 <section class="admin-shell horoscope-admin-shell">
-  <div class="page-heading"><div><div class="eyebrow">Contenido editorial con IA</div><h1>Horóscopos</h1></div><p>Genera un borrador con el proveedor configurado, revísalo y decide cuándo publicarlo.</p></div>
+  <div class="page-heading"><div><div class="eyebrow">Contenido editorial con IA</div><h1>Horóscopos</h1></div><p>Genera un signo o los doce de una vez. Cada lectura distingue sus tres decanatos.</p></div>
   {% if message %}<div class="alert success">{{ message }}</div>{% endif %}{% if error %}<div class="alert error">{{ error }}</div>{% endif %}
-  <section class="panel horoscope-generator"><div class="panel-heading"><span class="step">01</span><div><h2>Generar un nuevo borrador</h2><p>La IA redacta; el administrador conserva el control editorial y la publicación.</p></div></div>
+  <section class="panel horoscope-generator"><div class="panel-heading"><span class="step">01</span><div><h2>Generar nuevos borradores</h2><p>La IA redacta por signo y decanato; el administrador conserva el control editorial y la publicación.</p></div></div>
     {% if not configs %}<div class="alert error">Primero configura OpenAI o Gemini en <a href="/admin/ia">Inteligencia artificial</a>.</div>{% else %}
     <form method="post" action="/admin/horoscopos/generar" class="horoscope-form-grid"><input type="hidden" name="csrf" value="{{ session.csrf }}">
-      <label>Signo<select name="sign">{% for key, sign in zodiac_signs.items() %}<option value="{{ key }}">{{ sign[1] }} {{ sign[0] }}</option>{% endfor %}</select></label>
+      <label>Signo<select name="sign"><option value="all">✦ Todos los signos (12)</option>{% for key, sign in zodiac_signs.items() %}<option value="{{ key }}">{{ sign[1] }} {{ sign[0] }}</option>{% endfor %}</select></label>
       <label>Periodo<select name="period_type"><option value="daily">Diario</option><option value="weekly" selected>Semanal</option><option value="monthly">Mensual</option></select></label>
       <label>Vigencia<input name="period_label" required value="{{ default_period }}"></label>
       <label>Proveedor<select name="provider">{% for config in configs %}<option value="{{ config.provider }}">{{ config.provider|capitalize }} · {{ config.model }}</option>{% endfor %}</select></label>
       <label class="full">Enfoque editorial <small>opcional</small><input name="focus" maxlength="240" placeholder="Ejemplo: cambios de ciclo, paciencia y comunicación consciente"></label>
-      <button class="primary-button full"><span>Generar borrador con IA</span><span>✦</span></button>
+      <p class="full hint">“Todos los signos” crea 12 borradores independientes; cada uno contiene la guía del primer, segundo y tercer decanato.</p>
+      <button class="primary-button full"><span>Generar horóscopos con IA</span><span>✦</span></button>
     </form>{% endif %}
   </section>
   <section class="horoscope-admin-list"><div class="panel-heading"><span class="step">02</span><div><h2>Revisar y publicar</h2><p>Los borradores no aparecen al público hasta que selecciones Publicado.</p></div></div>

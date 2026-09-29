@@ -15,7 +15,8 @@ completa y como motor gratuito para el futuro VPS.
   tránsitos y datos técnicos guardados en Hostinger.
 - Claves cifradas de OpenAI o Gemini y comprobación de modelos.
 - Interpretación por IA en español a partir de la carta ya calculada.
-- Horóscopos generados como borrador, revisados y publicados por el administrador.
+- Horóscopos para un signo o para los doce a la vez, con los tres decanatos,
+  generados como borrador, revisados y publicados por el administrador.
 - Resultado privado, Aurita, correo y enlace preparado para WhatsApp.
 - Descarga del resultado mediante **Imprimir > Guardar como PDF**.
 
@@ -27,7 +28,7 @@ localmente las posiciones tropicales, las casas Placidus y los aspectos. El SVG
 y los datos técnicos se validan y guardan después en MySQL. No requiere VPS,
 RapidAPI ni una clave astrológica.
 
-La versión 0.6.1 corrige la orientación tradicional: las casas avanzan en
+La versión 0.7.0 corrige la orientación tradicional: las casas avanzan en
 sentido contrario a las manecillas del reloj desde el Ascendente, el MC queda
 arriba y el IC abajo. También valida que cada Nodo Sur sea la oposición exacta
 de 180 grados de su Nodo Norte, e incorpora nodos verdadero y medio, Lilith,

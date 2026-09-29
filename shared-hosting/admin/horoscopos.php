@@ -8,6 +8,17 @@ $signs = zodiac_signs();
 $periods = ['daily' => 'Diario', 'weekly' => 'Semanal', 'monthly' => 'Mensual'];
 $configs = db()->query('SELECT provider, model FROM ai_configs ORDER BY provider')->fetchAll();
 
+function general_horoscope_prompt(string $signName, string $periodName, string $periodLabel, string $focus): string
+{
+    return "Escribe un horóscopo GENERAL en español para el público de signo {$signName}. Período: {$periodName} ({$periodLabel}). "
+        . ($focus !== '' ? "Enfoque editorial: {$focus}. " : '')
+        . "Aclara de forma natural que es una orientación colectiva por signo solar y no una lectura de carta natal individual. Usa un tono cálido, elegante, simbólico y práctico. "
+        . "Diferencia obligatoriamente los tres decanatos del signo. Usa estos títulos exactos, cada uno en una línea independiente: PANORAMA GENERAL; PRIMER DECANATO · 0°00′ A 9°59′; SEGUNDO DECANATO · 10°00′ A 19°59′; TERCER DECANATO · 20°00′ A 29°59′; VÍNCULOS; TRABAJO Y RECURSOS; BIENESTAR; PREGUNTA PARA INTEGRAR. "
+        . "En cada decanato ofrece una orientación diferente y coherente con el período; no repitas el mismo texto cambiando palabras. Explica que el grado exacto del Sol natal permite saber cuál corresponde. "
+        . "No hagas afirmaciones deterministas, diagnósticos médicos, predicciones financieras garantizadas ni generes miedo. "
+        . "No uses Markdown: no escribas almohadillas, asteriscos, tablas ni bloques de código. Entrega entre 550 y 800 palabras.";
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     require_csrf();
     try {
@@ -15,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sign = (string)($_POST['sign'] ?? '');
         $periodType = (string)($_POST['period_type'] ?? 'weekly');
         $periodLabel = trim((string)($_POST['period_label'] ?? ''));
-        if (!isset($signs[$sign]) || !isset($periods[$periodType]) || $periodLabel === '') {
+        if (($sign !== 'all' && !isset($signs[$sign])) || !isset($periods[$periodType]) || $periodLabel === '') {
             throw new RuntimeException('Selecciona signo, período y fecha de vigencia.');
         }
 
@@ -26,23 +37,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new RuntimeException('Configura primero el proveedor de IA seleccionado.');
             }
             $focus = trim((string)($_POST['focus'] ?? ''));
-            $signName = $signs[$sign][0];
-            $prompt = "Escribe un horóscopo GENERAL en español para el público de signo {$signName}. Período: {$periods[$periodType]} ({$periodLabel}). "
-                . ($focus !== '' ? "Enfoque editorial: {$focus}. " : '')
-                . "Aclara de forma natural que es una orientación colectiva por signo solar y no una lectura de carta natal individual. Usa un tono cálido, elegante, simbólico y práctico. "
-                . "Incluye cuatro secciones con títulos en mayúsculas: PANORAMA, VÍNCULOS, TRABAJO Y RECURSOS, BIENESTAR. "
-                . "Cierra con una pregunta de reflexión. No hagas afirmaciones deterministas, diagnósticos médicos, predicciones financieras garantizadas ni generes miedo. "
-                . "No uses Markdown: no escribas almohadillas, asteriscos, tablas ni bloques de código. Entrega entre 350 y 550 palabras.";
-            $content = clean_ai_text(ai_generate($provider, decrypt_secret($ai['encrypted_api_key']), $ai['model'], $prompt));
-            $title = $signName . ' · ' . $periodLabel;
-            $stmt = db()->prepare("INSERT INTO horoscopes(sign,period_type,period_label,title,content,status,ai_provider,ai_model) VALUES(?,?,?,?,?,'draft',?,?)");
-            $stmt->execute([$sign, $periodType, $periodLabel, $title, $content, $provider, $ai['model']]);
-            $id = (int)db()->lastInsertId();
-            flash('success', 'Borrador generado. Revísalo antes de publicarlo.');
-            redirect('admin/horoscopos.php?edit=' . $id);
+            $targets = $sign === 'all' ? array_keys($signs) : [$sign];
+            if (count($targets) > 1 && function_exists('set_time_limit')) { @set_time_limit(0); }
+            $apiKey = decrypt_secret($ai['encrypted_api_key']);
+            $drafts = [];
+            $lastId = 0;
+            foreach ($targets as $targetSign) {
+                $signName = $signs[$targetSign][0];
+                $prompt = general_horoscope_prompt($signName, $periods[$periodType], $periodLabel, $focus);
+                $content = clean_ai_text(ai_generate($provider, $apiKey, $ai['model'], $prompt));
+                $title = $signName . ' · ' . $periodLabel . ' · Tres decanatos';
+                $drafts[] = [$targetSign, $periodType, $periodLabel, $title, $content, $provider, $ai['model']];
+            }
+            db()->beginTransaction();
+            try {
+                $stmt = db()->prepare("INSERT INTO horoscopes(sign,period_type,period_label,title,content,status,ai_provider,ai_model) VALUES(?,?,?,?,?,'draft',?,?)");
+                foreach ($drafts as $draft) {
+                    $stmt->execute($draft);
+                    $lastId = (int)db()->lastInsertId();
+                }
+                db()->commit();
+            } catch (Throwable $databaseError) {
+                if (db()->inTransaction()) { db()->rollBack(); }
+                throw $databaseError;
+            }
+            flash('success', count($targets) === 12 ? 'Se generaron 12 borradores, cada uno con sus tres decanatos. Revísalos antes de publicarlos.' : 'Borrador generado con sus tres decanatos. Revísalo antes de publicarlo.');
+            redirect('admin/horoscopos.php' . (count($targets) === 1 ? '?edit=' . $lastId : ''));
         }
 
         if ($action === 'save') {
+            if (!isset($signs[$sign])) { throw new RuntimeException('Selecciona un signo válido para guardar.'); }
             $id = (int)($_POST['id'] ?? 0);
             $title = trim((string)($_POST['title'] ?? ''));
             $content = clean_ai_text((string)($_POST['content'] ?? ''));
@@ -68,17 +92,18 @@ $editId = (int)($_GET['edit'] ?? 0);
 render_header('Horóscopos · Administración', 'admin-page', true);
 ?>
 <section class="admin-shell horoscope-admin-shell">
-  <div class="page-heading"><div><div class="eyebrow">Contenido editorial con IA</div><h1>Horóscopos</h1></div><p>Genera un borrador con el proveedor configurado, revísalo y decide cuándo publicarlo.</p></div>
+  <div class="page-heading"><div><div class="eyebrow">Contenido editorial con IA</div><h1>Horóscopos</h1></div><p>Genera un signo o los doce de una vez. Cada lectura distingue sus tres decanatos.</p></div>
   <section class="panel horoscope-generator">
-    <div class="panel-heading"><span class="step">01</span><div><h2>Generar un nuevo borrador</h2><p>La IA redacta; el administrador conserva el control editorial y la publicación.</p></div></div>
+    <div class="panel-heading"><span class="step">01</span><div><h2>Generar nuevos borradores</h2><p>La IA redacta por signo y decanato; el administrador conserva el control editorial y la publicación.</p></div></div>
     <?php if (!$configs): ?><div class="alert error">Primero configura OpenAI o Gemini en <a href="<?= e(url('admin/ia.php')) ?>">Inteligencia artificial</a>.</div><?php else: ?>
     <form method="post" class="horoscope-form-grid"><?= csrf_field() ?>
-      <label>Signo<select name="sign" required><?php foreach ($signs as $key => [$name, $symbol]): ?><option value="<?= e($key) ?>"><?= e($symbol . ' ' . $name) ?></option><?php endforeach; ?></select></label>
+      <label>Signo<select name="sign" required><option value="all">✦ Todos los signos (12)</option><?php foreach ($signs as $key => [$name, $symbol]): ?><option value="<?= e($key) ?>"><?= e($symbol . ' ' . $name) ?></option><?php endforeach; ?></select></label>
       <label>Período<select name="period_type"><option value="daily">Diario</option><option value="weekly" selected>Semanal</option><option value="monthly">Mensual</option></select></label>
       <label>Vigencia<input name="period_label" required value="Semana del <?= e(date('d/m/Y')) ?>" placeholder="Semana del 28/09 al 04/10"></label>
       <label>Proveedor<select name="provider"><?php foreach ($configs as $ai): ?><option value="<?= e($ai['provider']) ?>"><?= e(ucfirst($ai['provider']) . ' · ' . $ai['model']) ?></option><?php endforeach; ?></select></label>
       <label class="full">Enfoque editorial <small>opcional</small><input name="focus" maxlength="240" placeholder="Ejemplo: cambios de ciclo, paciencia y comunicación consciente"></label>
-      <button class="primary-button full" name="action" value="generate"><span>Generar borrador con IA</span><span>✦</span></button>
+      <p class="full hint">“Todos los signos” realiza 12 generaciones de IA y crea un borrador independiente para cada signo, con primer, segundo y tercer decanato.</p>
+      <button class="primary-button full" name="action" value="generate"><span>Generar horóscopos con IA</span><span>✦</span></button>
     </form><?php endif; ?>
   </section>
 

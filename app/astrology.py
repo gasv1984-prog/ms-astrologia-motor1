@@ -109,9 +109,18 @@ Nueva pregunta de la persona: {question}
 
 def build_horoscope_prompt(sign: str, period_name: str, period_label: str, focus: str = "") -> str:
     focus_instruction = f"Enfoque editorial: {focus}. " if focus else ""
-    return f"""Escribe un horóscopo en español para {sign}. Período: {period_name} ({period_label}).
-{focus_instruction}Usa un tono cálido, elegante, simbólico y práctico. Incluye un título breve y luego cuatro secciones:
-panorama, vínculos, trabajo y recursos, bienestar. Cierra con una pregunta de reflexión. No hagas afirmaciones
-deterministas, diagnósticos médicos, predicciones financieras garantizadas ni generes miedo. No uses bloques de código.
-Entrega entre 350 y 550 palabras en Markdown sencillo.
+    return f"""Escribe un horóscopo GENERAL en español para el público de signo {sign}. Período: {period_name} ({period_label}).
+{focus_instruction}Aclara que es una orientación colectiva por signo solar. Usa un tono cálido, elegante, simbólico y práctico.
+Diferencia obligatoriamente los tres decanatos. Usa estos títulos exactos, cada uno en una línea independiente:
+PANORAMA GENERAL
+PRIMER DECANATO · 0°00′ A 9°59′
+SEGUNDO DECANATO · 10°00′ A 19°59′
+TERCER DECANATO · 20°00′ A 29°59′
+VÍNCULOS
+TRABAJO Y RECURSOS
+BIENESTAR
+PREGUNTA PARA INTEGRAR
+En cada decanato ofrece una orientación distinta y explica que el grado exacto del Sol natal determina cuál corresponde.
+No hagas afirmaciones deterministas, diagnósticos médicos, predicciones financieras garantizadas ni generes miedo.
+No uses almohadillas, asteriscos, tablas ni bloques de código. Entrega entre 550 y 800 palabras.
 """

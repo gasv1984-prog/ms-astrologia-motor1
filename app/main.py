@@ -529,23 +529,31 @@ async def admin_horoscope_generate(request: Request):
     period_label = str(form.get("period_label", "")).strip()
     provider = str(form.get("provider", ""))
     config = db.get_ai_config(provider)
-    if sign not in ZODIAC_SIGNS or period_type not in HOROSCOPE_PERIODS or not period_label or not config:
+    if (sign != "all" and sign not in ZODIAC_SIGNS) or period_type not in HOROSCOPE_PERIODS or not period_label or not config:
         return redirect_with_message("/admin/horoscopos", error="Revisa el signo, el periodo y el proveedor de IA.")
     try:
-        prompt = build_horoscope_prompt(
-            ZODIAC_SIGNS[sign][0], HOROSCOPE_PERIODS[period_type], period_label, str(form.get("focus", "")).strip()
-        )
-        content = await generate_interpretation(
-            provider, decrypt_secret(config["encrypted_api_key"]), config["model"], prompt
-        )
-        item = db.create_horoscope(
-            {
-                "sign": sign, "period_type": period_type, "period_label": period_label,
-                "title": f"{ZODIAC_SIGNS[sign][0]} · {period_label}", "content": content,
-                "ai_provider": provider, "ai_model": config["model"],
-            }
-        )
-        return redirect_with_message(f"/admin/horoscopos?edit={item['id']}", message="Borrador generado. Revísalo antes de publicar.")
+        targets = list(ZODIAC_SIGNS) if sign == "all" else [sign]
+        api_key = decrypt_secret(config["encrypted_api_key"])
+        drafts = []
+        last_item = None
+        for target_sign in targets:
+            prompt = build_horoscope_prompt(
+                ZODIAC_SIGNS[target_sign][0], HOROSCOPE_PERIODS[period_type], period_label,
+                str(form.get("focus", "")).strip(),
+            )
+            content = await generate_interpretation(provider, api_key, config["model"], prompt)
+            drafts.append((target_sign, content))
+        for target_sign, content in drafts:
+            last_item = db.create_horoscope(
+                {
+                    "sign": target_sign, "period_type": period_type, "period_label": period_label,
+                    "title": f"{ZODIAC_SIGNS[target_sign][0]} · {period_label} · Tres decanatos", "content": content,
+                    "ai_provider": provider, "ai_model": config["model"],
+                }
+            )
+        destination = "/admin/horoscopos" if len(targets) == 12 else f"/admin/horoscopos?edit={last_item['id']}"
+        message = "Se generaron 12 borradores con sus tres decanatos. Revísalos antes de publicar." if len(targets) == 12 else "Borrador generado con sus tres decanatos. Revísalo antes de publicar."
+        return redirect_with_message(destination, message=message)
     except (ProviderError, ValueError) as exc:
         return redirect_with_message("/admin/horoscopos", error=str(exc))
 
