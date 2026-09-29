@@ -103,6 +103,8 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
 
     assert "Consulta de numerología" in home
     assert "Consulta de carta astral" in home
+    assert "service-numerologia-v1.png" in home
+    assert "service-carta-astral-v1.png" in home
     assert "lottery-results" in home
     assert "logo-ms-numerologia.png" in home
     assert "youtube.com/embed/wum8hs6AV2w" in home
@@ -118,5 +120,12 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
     assert "INSERT IGNORE INTO astrology_configs" in schema
     assert "https://gasv1984-prog.github.io/ms-astrologia-motor1/motor" in schema
 
-    for name in ("logo-ms-numerologia.png", "miguel-banner.png", "miguel-pointing.png", "miguel-profile.png"):
+    for name in (
+        "logo-ms-numerologia.png",
+        "miguel-banner.png",
+        "miguel-pointing.png",
+        "miguel-profile.png",
+        "service-numerologia-v1.png",
+        "service-carta-astral-v1.png",
+    ):
         assert (HOSTING / "assets" / name).stat().st_size > 10_000

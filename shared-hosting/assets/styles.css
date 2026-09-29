@@ -492,9 +492,11 @@ td small { margin-top: 5px; }
 .ms-home-hero h1 { margin: 0; font-size: clamp(3.6rem, 8vw, 7.4rem); line-height: .95; letter-spacing: .04em; text-transform: uppercase; background: linear-gradient(135deg, #a9781d, #fff4b7 38%, #c49125 68%, #fff0a8); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 12px 46px rgba(0,0,0,.6); }
 .ms-home-lead { width: min(730px, 100%); margin: 24px auto 0; color: #c4c1ca; font-size: clamp(1rem, 1.65vw, 1.25rem); line-height: 1.75; }
 .consultation-choices { width: min(960px, 100%); margin-top: 42px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.consultation-choice { min-height: 112px; padding: 19px 22px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; border: 1px solid rgba(212,175,55,.34); border-radius: 19px; color: #fff; background: linear-gradient(145deg, rgba(30,30,30,.83), rgba(8,8,9,.94)); box-shadow: 0 18px 45px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.04); text-align: left; text-decoration: none; transition: transform .3s, border-color .3s, box-shadow .3s; }
+.consultation-choice { min-height: 142px; padding: 14px 22px 14px 14px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 18px; overflow: hidden; border: 1px solid rgba(212,175,55,.34); border-radius: 19px; color: #fff; background: linear-gradient(145deg, rgba(30,30,30,.83), rgba(8,8,9,.94)); box-shadow: 0 18px 45px rgba(0,0,0,.42), inset 0 1px rgba(255,255,255,.04); text-align: left; text-decoration: none; transition: transform .3s, border-color .3s, box-shadow .3s; }
 .consultation-choice:hover { transform: translateY(-5px); border-color: rgba(252,241,178,.74); box-shadow: 0 24px 55px rgba(0,0,0,.58), 0 0 34px rgba(212,175,55,.12); }
 .consultation-choice .choice-icon { width: 60px; height: 60px; display: grid; place-items: center; border: 1px solid rgba(212,175,55,.38); border-radius: 16px; color: var(--gold-light); background: rgba(212,175,55,.08); font: 2rem Cinzel, Georgia, serif; }
+.consultation-choice .choice-art { width: 112px; height: 112px; display: block; object-fit: contain; filter: drop-shadow(0 10px 20px rgba(0,0,0,.42)); transition: transform .45s cubic-bezier(.2,.72,.2,1), filter .3s; }
+.consultation-choice:hover .choice-art { transform: rotate(5deg) scale(1.07); filter: drop-shadow(0 13px 25px rgba(212,175,55,.25)); }
 .consultation-choice small { margin-bottom: 7px; color: #918e98; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
 .consultation-choice strong { display: block; color: #fff8e4; font: 700 clamp(1rem, 1.6vw, 1.22rem)/1.25 Cinzel, Georgia, serif; }
 .consultation-choice b { color: var(--gold-light); font-size: 1.35rem; }
@@ -585,6 +587,7 @@ td small { margin-top: 5px; }
   .consultation-choices, .ms-guide-section, .method-grid, .lottery-heading, .social-band, .media-grid { grid-template-columns: 1fr; }
   .consultation-choice { min-height: 102px; padding: 16px; gap: 13px; }
   .consultation-choice .choice-icon { width: 52px; height: 52px; }
+  .consultation-choice .choice-art { width: 84px; height: 84px; }
   .ms-guide-photo { min-height: 0; aspect-ratio: 2.25 / 1; }
   .precision-band { grid-template-columns: 1fr; }
   .precision-band div { min-height: 105px; border-right: 0; border-bottom: 1px solid rgba(212,175,55,.13); }

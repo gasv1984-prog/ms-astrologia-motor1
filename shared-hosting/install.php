@@ -221,7 +221,7 @@ if (empty($_SESSION['csrf'])) {
 }
 ?><!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Instalar Miguel Salazar Astrología</title><link rel="stylesheet" href="assets/styles.css?v=0.8.2"><link rel="icon" href="assets/logo-ms-numerologia.png"></head>
+<title>Instalar Miguel Salazar Astrología</title><link rel="stylesheet" href="assets/styles.css?v=0.8.3"><link rel="icon" href="assets/logo-ms-numerologia.png"></head>
 <body><header class="topbar"><a class="brand" href="./"><img class="brand-logo" src="assets/logo-ms-numerologia.png" alt="Miguel Salazar"></a></header><main>
 <section class="center-card"><div class="eyebrow">Instalador automatico</div><h1>MS Astrologia</h1>
 <?php if ($error): ?><div class="alert error"><strong>No se pudo instalar</strong><br><?= h($error) ?></div><?php endif; ?>

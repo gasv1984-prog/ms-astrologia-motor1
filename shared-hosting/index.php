@@ -7,16 +7,16 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 <section class="ms-home-hero" aria-labelledby="home-title">
   <div class="ms-home-hero-bg" aria-hidden="true"></div>
   <div class="ms-home-hero-content reveal">
-    <img class="ms-home-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.2')) ?>" alt="Miguel Salazar">
+    <img class="ms-home-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.3')) ?>" alt="Miguel Salazar">
     <div class="eyebrow">Numerología · Astrología · Crecimiento personal</div>
     <h1 id="home-title">Miguel Salazar</h1>
     <p class="ms-home-lead">Dos caminos para comprender tus ciclos, reconocer tus talentos y tomar decisiones con mayor claridad.</p>
     <div class="consultation-choices" aria-label="Elige tu consulta">
       <a class="consultation-choice numerology-choice" href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20solicitar%20una%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">
-        <span class="choice-icon">№</span><span><small>Camino de vida y ciclos</small><strong>Consulta de numerología</strong></span><b>→</b>
+        <img class="choice-art" src="<?= e(url('assets/service-numerologia-v1.png?v=0.8.3')) ?>" alt="Emblema de numerología"><span><small>Camino de vida y ciclos</small><strong>Consulta de numerología</strong></span><b>→</b>
       </a>
       <a class="consultation-choice astrology-choice" href="<?= e(url('solicitar.php')) ?>">
-        <span class="choice-icon">✦</span><span><small>Carta calculada con precisión</small><strong>Consulta de carta astral</strong></span><b>→</b>
+        <img class="choice-art" src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.3')) ?>" alt="Mapa cósmico de carta astral"><span><small>Carta calculada con precisión</small><strong>Consulta de carta astral</strong></span><b>→</b>
       </a>
     </div>
     <div class="home-quick-links"><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar una solicitud</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20necesito%20orientaci%C3%B3n%20para%20elegir%20mi%20consulta" target="_blank" rel="noreferrer">Hablar con Miguel</a></div>
@@ -24,7 +24,7 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 </section>
 
 <section class="ms-guide-section reveal">
-  <div class="ms-guide-photo"><img src="<?= e(url('assets/miguel-pointing.png?v=0.8.2')) ?>" alt="Miguel Salazar, numerólogo y astrólogo"></div>
+  <div class="ms-guide-photo"><img src="<?= e(url('assets/miguel-pointing.png?v=0.8.3')) ?>" alt="Miguel Salazar, numerólogo y astrólogo"></div>
   <div class="ms-guide-copy"><div class="eyebrow">Una orientación personal</div><h2>Elige la lectura que responde a tu momento.</h2><p>La numerología interpreta la vibración de tu nombre y tu fecha. La carta astral calcula la posición real del cielo en el instante y lugar exactos de tu nacimiento.</p>
     <div class="method-grid">
       <article><span>01</span><h3>Numerología</h3><p>Camino de vida, talentos, desafíos, propósito y ciclo personal actual.</p><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20mi%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">Solicitar por WhatsApp →</a></article>
