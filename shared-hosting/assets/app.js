@@ -61,6 +61,35 @@ if (aurita) {
   form.addEventListener('submit',async(event)=>{event.preventDefault();const message=textarea.value.trim();if(!message)return;addMessage('user','Tu',message);textarea.value='';button.disabled=true;feedback.textContent='Aurita esta leyendo tu consulta…';try{const response=await fetch(appUrl('api/aurita.php'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({public_id:aurita.dataset.publicId,token:aurita.dataset.token,message})});const payload=await response.json();if(!response.ok)throw new Error(payload.error||'Aurita no pudo responder.');addMessage('assistant','Aurita',payload.answer_html||payload.answer,Boolean(payload.answer_html));feedback.textContent='';}catch(error){feedback.className='form-feedback error-text';feedback.textContent=error.message;}finally{button.disabled=false;}});
 }
 
+document.querySelectorAll('[data-chart-expand]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const container = button.closest('.chart-panel, .chart-summary');
+    const chart = container?.querySelector('.chart-svg');
+    if (!chart) return;
+    const dialog = document.createElement('dialog');
+    dialog.className = 'chart-zoom-dialog';
+    const toolbar = document.createElement('div');
+    toolbar.className = 'chart-zoom-toolbar';
+    const title = document.createElement('strong');
+    title.textContent = 'Carta natal ampliada';
+    const close = document.createElement('button');
+    close.type = 'button';
+    close.className = 'secondary-button';
+    close.textContent = 'Cerrar ×';
+    const content = document.createElement('div');
+    content.className = 'chart-zoom-content';
+    content.append(chart.querySelector('svg')?.cloneNode(true) || chart.cloneNode(true));
+    toolbar.append(title, close);
+    dialog.append(toolbar, content);
+    document.body.append(dialog);
+    const dismiss = () => { dialog.close(); dialog.remove(); };
+    close.addEventListener('click', dismiss);
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) dismiss(); });
+    dialog.addEventListener('cancel', (event) => { event.preventDefault(); dismiss(); });
+    dialog.showModal();
+  });
+});
+
 (() => {
   const revealItems = [...document.querySelectorAll('.reveal')];
   if (!revealItems.length) return;

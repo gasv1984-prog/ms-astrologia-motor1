@@ -276,9 +276,9 @@ function render_header(string $title, string $bodyClass = '', bool $adminArea = 
     $flash = take_flash();
     ?><!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/ms-logo.png?v=0.6.0')) ?>">
-<link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.6.0')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.6.0')) ?>"></script></head>
-<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/ms-logo.png?v=0.6.0')) ?>" alt="Miguel Salazar Colombia"><span><strong>msastrologia</strong><small>Cartas natales con precisión</small></span></a>
+<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/ms-logo.png?v=0.6.1')) ?>">
+<link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.6.1')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.6.1')) ?>"></script></head>
+<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/ms-logo.png?v=0.6.1')) ?>" alt="Miguel Salazar Colombia"><span><strong>msastrologia</strong><small>Cartas natales con precisión</small></span></a>
 <?php if ($adminArea && $admin): ?><nav class="admin-nav"><a href="<?= e(url('admin/index.php')) ?>">Solicitudes</a><a href="<?= e(url('admin/astrologia.php')) ?>">Motor astrológico</a><a href="<?= e(url('admin/horoscopos.php')) ?>">Horóscopos</a><a href="<?= e(url('admin/ia.php')) ?>">Inteligencia artificial</a><a href="<?= e(url('admin/perfil.php')) ?>">Perfil</a><form action="<?= e(url('admin/logout.php')) ?>" method="post"><?= csrf_field() ?><button class="link-button">Salir</button></form></nav>
 <?php else: ?><nav class="public-nav"><a href="<?= e(url('solicitar.php')) ?>">Solicitar lectura</a><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar solicitud</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="<?= e(url('admin/login.php')) ?>">Administración</a></nav><?php endif; ?></header><main>
 <?php if ($flash): ?><div class="alert <?= e($flash['type']) ?>" role="alert"><?= e($flash['message']) ?></div><?php endif; ?>

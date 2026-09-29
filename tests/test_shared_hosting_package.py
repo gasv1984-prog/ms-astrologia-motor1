@@ -40,9 +40,21 @@ def test_github_engine_uses_official_ephemerides_and_counterclockwise_houses():
     assert "zodiac_direction: 'contrario a las manecillas del reloj'" in source
     assert "Nodo Sur verdadero" in source
     assert "southLongitude = normalize(north.longitude + 180)" in source
-    assert ">DSC</text>" in source
-    assert ">IC</text>" in source
+    assert "['DSC', normalize(houses.ascendant + 180)]" in source
+    assert "['IC', normalize(houses.mc + 180)]" in source
     assert "[1, 4, 7, 10].includes(house)" in source
+    assert "Nunca alterar la longitud" in source
+    assert 'data-house=' in source
+    assert 'UBICACIÓN' in source
+    assert 'COORDENADAS' in source
+
+    admin_request = (HOSTING / "admin" / "solicitud.php").read_text(encoding="utf-8")
+    public_result = (HOSTING / "resultado.php").read_text(encoding="utf-8")
+    browser_js = (HOSTING / "assets" / "app.js").read_text(encoding="utf-8")
+    assert "data-chart-expand" in admin_request
+    assert "data-chart-expand" in public_result
+    assert "<dt>Ubicación</dt>" in public_result
+    assert "chart-zoom-dialog" in browser_js
 
     ephemeris = ROOT / "github-pages" / "motor" / "ephe"
     assert (ephemeris / "sepl_18.se1").stat().st_size > 400_000

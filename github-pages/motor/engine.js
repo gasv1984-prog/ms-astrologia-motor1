@@ -7,7 +7,7 @@ import {
   CalculationFlag,
 } from './vendor/swisseph-browser.js';
 
-const ENGINE_VERSION = '2.0.0';
+const ENGINE_VERSION = '2.1.0';
 const statusNode = document.getElementById('status');
 const allowedOrigins = new Set([
   'https://msastrologia.xyz',
@@ -227,14 +227,16 @@ function renderChartSvg(subject, planets, houses, aspects) {
     const position = zodiacPosition(longitude);
     return `${String(position.degree).padStart(2, '0')}°${String(position.minute).padStart(2, '0')}′ ${position.symbol}`;
   };
+  const shorten = (value, length = 48) => String(value || '').length > length ? `${String(value).slice(0, length - 1)}…` : String(value || '');
   const parts = [
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 720" role="img" aria-labelledby="chart-title chart-desc">',
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="-28 -28 1176 776" role="img" aria-labelledby="chart-title chart-desc">',
     `<title id="chart-title">Carta natal de ${escapeXml(subject.name)}</title>`,
     '<desc id="chart-desc">Carta tropical calculada con Swiss Ephemeris WebAssembly y casas Placidus.</desc>',
     '<defs><radialGradient id="bg" cx="50%" cy="45%"><stop offset="0" stop-color="#242039"/><stop offset="1" stop-color="#0d0c18"/></radialGradient><filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>',
-    '<rect width="1120" height="720" rx="20" fill="#0d0c18"/>',
+    '<rect x="-28" y="-28" width="1176" height="776" rx="20" fill="#0d0c18"/>',
     '<circle cx="360" cy="360" r="350" fill="url(#bg)" stroke="#d8be77" stroke-width="2"/>',
     '<circle cx="360" cy="360" r="300" fill="none" stroke="#514867"/>',
+    '<circle cx="360" cy="360" r="286" fill="none" stroke="#393347"/>',
     '<circle cx="360" cy="360" r="220" fill="none" stroke="#514867"/>',
     '<circle cx="360" cy="360" r="150" fill="#100f1c" stroke="#3d374d"/>',
   ];
@@ -246,6 +248,15 @@ function renderChartSvg(subject, planets, houses, aspects) {
     const [labelX, labelY] = polar(longitude + 15, ascendant, 325, center);
     parts.push(`<line x1="${round(innerX, 2)}" y1="${round(innerY, 2)}" x2="${round(outerX, 2)}" y2="${round(outerY, 2)}" stroke="#726581"/>`);
     parts.push(`<text x="${round(labelX, 2)}" y="${round(labelY + 9, 2)}" fill="#d8be77" font-size="27" text-anchor="middle">${zodiac[index][2]}</text>`);
+  }
+
+  // Escala eclíptica de 5°; las marcas de 10° y los límites de signo son
+  // mayores para que la relación entre signos y cúspides sea verificable.
+  for (let longitude = 0; longitude < 360; longitude += 5) {
+    const tickLength = longitude % 30 === 0 ? 14 : (longitude % 10 === 0 ? 9 : 5);
+    const [outerX, outerY] = polar(longitude, ascendant, 300, center);
+    const [innerX, innerY] = polar(longitude, ascendant, 300 - tickLength, center);
+    parts.push(`<line x1="${round(innerX, 2)}" y1="${round(innerY, 2)}" x2="${round(outerX, 2)}" y2="${round(outerY, 2)}" stroke="${longitude % 30 === 0 ? '#d8be77' : '#756d80'}" stroke-width="${longitude % 30 === 0 ? 1.4 : .7}"/>`);
   }
 
   for (let house = 1; house <= 12; house += 1) {
@@ -268,74 +279,86 @@ function renderChartSvg(subject, planets, houses, aspects) {
     parts.push(`<line x1="${round(x1, 2)}" y1="${round(y1, 2)}" x2="${round(x2, 2)}" y2="${round(y2, 2)}" stroke="${aspect.color}" stroke-width="1.2" opacity=".58"/>`);
   }
 
-  const occupied = [];
+  const placedPlanets = [];
   const drawablePlanets = planets.filter((planet) => !['mean_north_node', 'mean_south_node'].includes(planet.key));
   for (const planet of drawablePlanets) {
-    let displayLongitude = planet.longitude;
-    for (const used of occupied) {
-      if (angularDistance(displayLongitude, used) < 5.2) displayLongitude += 5.2;
-    }
-    occupied.push(normalize(displayLongitude));
-    const [lineX, lineY] = polar(planet.longitude, ascendant, 220, center);
-    const [symbolX, symbolY] = polar(displayLongitude, ascendant, 258, center);
+    // Nunca alterar la longitud para separar símbolos: un desplazamiento
+    // angular puede hacer que un planeta parezca estar en otra casa. Los
+    // solapamientos se resuelven con carriles radiales sobre el mismo grado.
+    const nearby = placedPlanets.filter((placed) => angularDistance(planet.longitude, placed.longitude) < 7.5).length;
+    const radialLanes = [260, 220, 180, 280];
+    const symbolRadius = radialLanes[nearby % radialLanes.length];
+    placedPlanets.push({ longitude: planet.longitude, radius: symbolRadius });
+    const [lineX, lineY] = polar(planet.longitude, ascendant, 286, center);
+    const [symbolX, symbolY] = polar(planet.longitude, ascendant, symbolRadius, center);
+    parts.push(`<g data-point="${escapeXml(planet.key)}" data-house="${planet.house ?? ''}" data-longitude="${planet.longitude}">`);
     parts.push(`<line x1="${round(lineX, 2)}" y1="${round(lineY, 2)}" x2="${round(symbolX, 2)}" y2="${round(symbolY, 2)}" stroke="#8c7b9d" opacity=".65"/>`);
     parts.push(`<circle cx="${round(symbolX, 2)}" cy="${round(symbolY, 2)}" r="17" fill="#171425" stroke="#d8be77"/>`);
     parts.push(`<text x="${round(symbolX, 2)}" y="${round(symbolY + 8, 2)}" fill="#f6f0e5" font-size="23" text-anchor="middle" filter="url(#glow)">${planet.symbol}</text>`);
+    parts.push(`<text x="${round(symbolX + 18, 2)}" y="${round(symbolY - 12, 2)}" fill="#bcb2c8" font-size="9" text-anchor="middle">${planet.sign.degree}°${String(planet.sign.minute).padStart(2, '0')}′</text>`);
+    parts.push('</g>');
   }
 
-  const [ascX, ascY] = polar(houses.ascendant, ascendant, 315, center);
-  const [dscX, dscY] = polar(normalize(houses.ascendant + 180), ascendant, 315, center);
-  const [mcX, mcY] = polar(houses.mc, ascendant, 315, center);
-  const [icX, icY] = polar(normalize(houses.mc + 180), ascendant, 315, center);
-  parts.push(`<text x="${round(ascX, 2)}" y="${round(ascY - 8, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">ASC</text>`);
-  parts.push(`<text x="${round(dscX, 2)}" y="${round(dscY - 8, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">DSC</text>`);
-  parts.push(`<text x="${round(mcX, 2)}" y="${round(mcY - 8, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">MC</text>`);
-  parts.push(`<text x="${round(icX, 2)}" y="${round(icY + 18, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">IC</text>`);
+  const chartAngles = [
+    ['ASC', houses.ascendant],
+    ['DSC', normalize(houses.ascendant + 180)],
+    ['MC', houses.mc],
+    ['IC', normalize(houses.mc + 180)],
+  ];
+  for (const [label, longitude] of chartAngles) {
+    const [ringX, ringY] = polar(longitude, ascendant, 300, center);
+    const [outerX, outerY] = polar(longitude, ascendant, 357, center);
+    const [labelX, labelY] = polar(longitude, ascendant, 371, center);
+    parts.push(`<line x1="${round(ringX, 2)}" y1="${round(ringY, 2)}" x2="${round(outerX, 2)}" y2="${round(outerY, 2)}" stroke="#d8be77" stroke-width="2"/>`);
+    parts.push(`<text x="${round(labelX, 2)}" y="${round(labelY + 5, 2)}" fill="#f6f0e5" font-size="13" font-weight="700" text-anchor="middle">${label}</text>`);
+  }
 
   parts.push('<text x="360" y="338" fill="#d8be77" font-family="Georgia,serif" font-size="34" text-anchor="middle">MS</text>');
   parts.push(`<text x="360" y="371" fill="#f6f0e5" font-family="Georgia,serif" font-size="22" text-anchor="middle">${escapeXml(subject.name)}</text>`);
-  parts.push(`<text x="360" y="398" fill="#a9a1b5" font-size="12" text-anchor="middle">${escapeXml(subject.birth_date)} · ${escapeXml(String(subject.birth_time).slice(0, 5))}</text>`);
-  parts.push('<text x="360" y="420" fill="#756d80" font-size="10" text-anchor="middle">TROPICAL · PLACIDUS · SWISS EPHEMERIS WASM</text>');
+  parts.push(`<text x="360" y="395" fill="#a9a1b5" font-size="11" text-anchor="middle">${escapeXml(shorten(subject.birthplace, 44))}</text>`);
+  parts.push(`<text x="360" y="414" fill="#a9a1b5" font-size="11" text-anchor="middle">${escapeXml(subject.birth_date)} · ${escapeXml(String(subject.birth_time).slice(0, 5))}</text>`);
+  parts.push('<text x="360" y="433" fill="#756d80" font-size="9" text-anchor="middle">TROPICAL · PLACIDUS · SWISS EPHEMERIS WASM</text>');
 
-  // Panel técnico inspirado en la carta profesional original, sin perder la
-  // legibilidad de la rueda en pantallas pequeñas.
-  parts.push('<line x1="730" y1="24" x2="730" y2="696" stroke="#393347"/>');
-  parts.push(`<text x="758" y="48" fill="#f6f0e5" font-family="Georgia,serif" font-size="25">${escapeXml(subject.name)} · CARTA NATAL</text>`);
-  parts.push(`<text x="758" y="72" fill="#8f879c" font-size="12">${escapeXml(subject.birthplace || '')} · ${escapeXml(subject.timezone)}</text>`);
-  parts.push('<text x="758" y="101" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">UBICACIONES IMPORTANTES</text>');
+  // Panel técnico: conserva todos los datos y se puede ampliar desde la interfaz.
+  parts.push('<line x1="730" y1="18" x2="730" y2="702" stroke="#393347"/>');
+  parts.push(`<text x="758" y="38" fill="#f6f0e5" font-family="Georgia,serif" font-size="20">${escapeXml(shorten(subject.name, 25))}</text>`);
+  parts.push('<text x="1088" y="38" fill="#d8be77" font-size="11" font-weight="700" text-anchor="end" letter-spacing="1.2">CARTA NATAL</text>');
+  parts.push(`<text x="758" y="60" fill="#d8be77" font-size="9" font-weight="700">UBICACIÓN</text><text x="824" y="60" fill="#b6aec0" font-size="10">${escapeXml(shorten(subject.birthplace, 45))}</text>`);
+  parts.push(`<text x="758" y="78" fill="#d8be77" font-size="9" font-weight="700">COORDENADAS</text><text x="844" y="78" fill="#b6aec0" font-size="10">${Number(subject.latitude).toFixed(6)}, ${Number(subject.longitude).toFixed(6)}</text>`);
+  parts.push(`<text x="758" y="96" fill="#d8be77" font-size="9" font-weight="700">ZONA HORARIA</text><text x="844" y="96" fill="#b6aec0" font-size="10">${escapeXml(subject.timezone)}</text>`);
+  parts.push('<text x="758" y="121" fill="#d8be77" font-size="10" font-weight="700" letter-spacing="1">PLANETAS Y PUNTOS</text>');
   const tablePlanets = planets.filter((planet) => !['mean_north_node', 'mean_south_node'].includes(planet.key));
   tablePlanets.forEach((planet, index) => {
-    const y = 126 + index * 22;
-    parts.push(`<text x="758" y="${y}" fill="#d8be77" font-size="17">${planet.symbol}</text>`);
-    parts.push(`<text x="783" y="${y}" fill="#e7e0ed" font-size="12">${escapeXml(planet.name)}</text>`);
-    parts.push(`<text x="902" y="${y}" fill="#afa7bb" font-size="11" text-anchor="end">${formatPosition(planet.longitude)}${planet.retrograde ? ' ℞' : ''}</text>`);
-    parts.push(`<text x="922" y="${y}" fill="#756d80" font-size="10">C${planet.house ?? '—'}</text>`);
+    const y = 144 + index * 20;
+    parts.push(`<text x="758" y="${y}" fill="#d8be77" font-size="16">${planet.symbol}</text>`);
+    parts.push(`<text x="782" y="${y}" fill="#e7e0ed" font-size="10">${escapeXml(planet.name)}</text>`);
+    parts.push(`<text x="907" y="${y}" fill="#afa7bb" font-size="10" text-anchor="end">${formatPosition(planet.longitude)}${planet.retrograde ? ' ℞' : ''}</text>`);
+    parts.push(`<text x="918" y="${y}" fill="#756d80" font-size="9">C${planet.house ?? '—'}</text>`);
   });
-
-  parts.push('<text x="958" y="101" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">CÚSPIDES</text>');
+  parts.push('<text x="954" y="121" fill="#d8be77" font-size="10" font-weight="700" letter-spacing="1">CÚSPIDES</text>');
   for (let house = 1; house <= 12; house += 1) {
-    const y = 126 + (house - 1) * 22;
-    parts.push(`<text x="958" y="${y}" fill="#8f879c" font-size="11">Casa ${house}</text>`);
-    parts.push(`<text x="1086" y="${y}" fill="#e7e0ed" font-size="11" text-anchor="end">${formatPosition(houses.cusps[house])}</text>`);
+    const y = 144 + (house - 1) * 20;
+    parts.push(`<text x="954" y="${y}" fill="#8f879c" font-size="10">Casa ${house}</text>`);
+    parts.push(`<text x="1088" y="${y}" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(houses.cusps[house])}</text>`);
   }
-  parts.push(`<text x="958" y="400" fill="#8f879c" font-size="10">ASC / DSC</text><text x="1086" y="400" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(houses.ascendant)} / ${formatPosition(normalize(houses.ascendant + 180))}</text>`);
-  parts.push(`<text x="958" y="421" fill="#8f879c" font-size="10">MC / IC</text><text x="1086" y="421" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(houses.mc)} / ${formatPosition(normalize(houses.mc + 180))}</text>`);
-
+  parts.push(`<text x="954" y="389" fill="#8f879c" font-size="9">ASC / DSC</text><text x="1088" y="389" fill="#e7e0ed" font-size="9" text-anchor="end">${formatPosition(houses.ascendant)} / ${formatPosition(normalize(houses.ascendant + 180))}</text>`);
+  parts.push(`<text x="954" y="408" fill="#8f879c" font-size="9">MC / IC</text><text x="1088" y="408" fill="#e7e0ed" font-size="9" text-anchor="end">${formatPosition(houses.mc)} / ${formatPosition(normalize(houses.mc + 180))}</text>`);
   const elements = chartBalance.elements.percentages;
   const modalities = chartBalance.modalities.percentages;
-  parts.push('<line x1="758" y1="444" x2="1088" y2="444" stroke="#393347"/>');
-  parts.push('<text x="758" y="470" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">SÍNTESIS TÉCNICA</text>');
-  parts.push(`<text x="758" y="495" fill="#afa7bb" font-size="11">Fase lunar</text><text x="1088" y="495" fill="#e7e0ed" font-size="11" text-anchor="end">${escapeXml(phase.name)} · ${phase.illumination_percentage}%</text>`);
-  parts.push(`<text x="758" y="516" fill="#afa7bb" font-size="11">Elementos</text><text x="1088" y="516" fill="#e7e0ed" font-size="10" text-anchor="end">F ${elements.fuego}% · T ${elements.tierra}% · A ${elements.aire}% · Ag ${elements.agua}%</text>`);
-  parts.push(`<text x="758" y="537" fill="#afa7bb" font-size="11">Modalidades</text><text x="1088" y="537" fill="#e7e0ed" font-size="10" text-anchor="end">C ${modalities.cardinal}% · F ${modalities.fijo}% · M ${modalities.mutable}%</text>`);
-  parts.push(`<text x="758" y="558" fill="#afa7bb" font-size="11">Nodos del karma N / S</text><text x="1088" y="558" fill="#e7e0ed" font-size="10" text-anchor="end">${formatPosition(planetMap.get('true_north_node').longitude)} / ${formatPosition(planetMap.get('true_south_node').longitude)}</text>`);
-  parts.push('<text x="758" y="589" fill="#d8be77" font-size="12" font-weight="700" letter-spacing="2">ASPECTOS MÁS EXACTOS</text>');
+  parts.push('<line x1="758" y1="430" x2="1088" y2="430" stroke="#393347"/>');
+  parts.push('<text x="758" y="454" fill="#d8be77" font-size="11" font-weight="700" letter-spacing="1.5">SÍNTESIS TÉCNICA</text>');
+  parts.push(`<text x="758" y="477" fill="#afa7bb" font-size="10">Fase lunar</text><text x="1088" y="477" fill="#e7e0ed" font-size="10" text-anchor="end">${escapeXml(phase.name)} · ${phase.illumination_percentage}%</text>`);
+  parts.push(`<text x="758" y="498" fill="#afa7bb" font-size="10">Elementos</text><text x="1088" y="498" fill="#e7e0ed" font-size="9" text-anchor="end">F ${elements.fuego}% · T ${elements.tierra}% · A ${elements.aire}% · Ag ${elements.agua}%</text>`);
+  parts.push(`<text x="758" y="519" fill="#afa7bb" font-size="10">Modalidades</text><text x="1088" y="519" fill="#e7e0ed" font-size="9" text-anchor="end">C ${modalities.cardinal}% · F ${modalities.fijo}% · M ${modalities.mutable}%</text>`);
+  parts.push(`<text x="758" y="540" fill="#afa7bb" font-size="10">Nodos del karma N / S</text><text x="1088" y="540" fill="#e7e0ed" font-size="9" text-anchor="end">${formatPosition(planetMap.get('true_north_node').longitude)} / ${formatPosition(planetMap.get('true_south_node').longitude)}</text>`);
+  parts.push('<text x="758" y="570" fill="#d8be77" font-size="11" font-weight="700" letter-spacing="1.5">ASPECTOS MÁS EXACTOS</text>');
   aspects.slice().sort((a, b) => a.orb - b.orb).slice(0, 6).forEach((aspect, index) => {
-    const y = 614 + index * 17;
+    const y = 594 + index * 17;
     parts.push(`<circle cx="763" cy="${y - 4}" r="3" fill="${aspect.color}"/>`);
-    parts.push(`<text x="774" y="${y}" fill="#c7bfce" font-size="10">${escapeXml(aspect.first_name)} ${escapeXml(aspect.name)} ${escapeXml(aspect.second_name)}</text>`);
-    parts.push(`<text x="1088" y="${y}" fill="#8f879c" font-size="10" text-anchor="end">${aspect.orb.toFixed(2)}° · ${aspect.movement === 'aplicativo' ? 'A' : 'S'}</text>`);
+    parts.push(`<text x="774" y="${y}" fill="#c7bfce" font-size="9">${escapeXml(aspect.first_name)} ${escapeXml(aspect.name)} ${escapeXml(aspect.second_name)}</text>`);
+    parts.push(`<text x="1088" y="${y}" fill="#8f879c" font-size="9" text-anchor="end">${aspect.orb.toFixed(2)}° · ${aspect.movement === 'aplicativo' ? 'A' : 'S'}</text>`);
   });
+
   parts.push('</svg>');
   return parts.join('');
 }

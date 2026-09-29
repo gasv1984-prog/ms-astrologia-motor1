@@ -327,6 +327,7 @@ td small { margin-top: 5px; }
 .chart-frame img { width: 100%; max-height: 560px; object-fit: contain; }
 .chart-svg { padding: 12px; }
 .chart-svg svg { width: 100%; height: auto; max-height: 650px; display: block; }
+.chart-view-actions{display:flex;justify-content:flex-end;margin:0 0 12px}.chart-zoom-dialog{width:min(96vw,1680px);max-width:none;max-height:96vh;padding:0;border:1px solid var(--line);border-radius:18px;background:#0c0b17;color:var(--ink);box-shadow:0 30px 100px rgba(0,0,0,.72)}.chart-zoom-dialog::backdrop{background:rgba(3,2,10,.88);backdrop-filter:blur(7px)}.chart-zoom-toolbar{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 18px;border-bottom:1px solid var(--line);background:rgba(12,11,23,.96)}.chart-zoom-content{padding:18px;overflow:auto}.chart-zoom-content>svg{display:block;width:100%;height:auto;max-height:none;margin:auto}
 .chart-meta { margin: 11px 0 0; color: var(--muted); font-size: .74rem; }
 .github-chart-control { display: grid; gap: 10px; }
 .chart-engine-status { margin: 0; color: var(--muted); font-size: .78rem; line-height: 1.5; }

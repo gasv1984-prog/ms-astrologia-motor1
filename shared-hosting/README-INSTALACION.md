@@ -27,7 +27,7 @@ localmente las posiciones tropicales, las casas Placidus y los aspectos. El SVG
 y los datos técnicos se validan y guardan después en MySQL. No requiere VPS,
 RapidAPI ni una clave astrológica.
 
-La versión 0.6.0 corrige la orientación tradicional: las casas avanzan en
+La versión 0.6.1 corrige la orientación tradicional: las casas avanzan en
 sentido contrario a las manecillas del reloj desde el Ascendente, el MC queda
 arriba y el IC abajo. También valida que cada Nodo Sur sea la oposición exacta
 de 180 grados de su Nodo Norte, e incorpora nodos verdadero y medio, Lilith,

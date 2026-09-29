@@ -5,23 +5,40 @@
 <iframe id="motor" src="../github-pages/motor/?parent_origin=http%3A%2F%2F127.0.0.1%3A8765" hidden></iframe>
 <script>
 const iframe = document.getElementById('motor');
+const samples = {
+  default: {
+    name: 'Prueba de precisión', birth_date: '1984-02-12', birth_time: '10:30:00',
+    birthplace: 'Bogotá, Colombia', latitude: 4.711, longitude: -74.0721,
+    timezone: 'America/Bogota', transit_date: '2026-09-28',
+    horoscope_period: 'monthly', horoscope_focus: 'propósito personal'
+  },
+  claudia: {
+    name: 'Claudia Marcela Castro', birth_date: '1983-07-29', birth_time: '23:40:00',
+    birthplace: 'Armenia, Quindío, Colombia', latitude: 4.5333, longitude: -75.6667,
+    timezone: 'America/Bogota'
+  }
+};
+const selectedSample = samples[new URLSearchParams(location.search).get('sample')] || samples.default;
 window.addEventListener('message', (event) => {
   if (event.origin !== location.origin || event.source !== iframe.contentWindow) return;
   if (event.data?.type === 'msastrologia:ready') {
     document.getElementById('status').textContent = 'Calculando…';
     iframe.contentWindow.postMessage({
-      type: 'msastrologia:calculate', requestId: 'precision-test', subject: {
-        name: 'Prueba de precisión', birth_date: '1984-02-12', birth_time: '10:30:00',
-        birthplace: 'Bogotá, Colombia', latitude: 4.711, longitude: -74.0721,
-        timezone: 'America/Bogota', transit_date: '2026-09-28',
-        horoscope_period: 'monthly', horoscope_focus: 'propósito personal'
-      }
+      type: 'msastrologia:calculate', requestId: 'precision-test', subject: selectedSample
     }, location.origin);
   }
   if (event.data?.type === 'msastrologia:result') {
     const data = event.data.data;
     const byKey = Object.fromEntries(data.planets.map((point) => [point.key, point]));
     const mod360 = (value) => ((value % 360) + 360) % 360;
+    const houseFor = (longitude, cusps) => {
+      for (let house = 1; house <= 12; house += 1) {
+        const start = mod360(cusps[house]);
+        const end = mod360(cusps[house === 12 ? 1 : house + 1]);
+        if (mod360(longitude - start) < mod360(end - start)) return house;
+      }
+      return null;
+    };
     const asc = data.houses.ascendant;
     const house2 = data.houses.cusps[2];
     const house3 = data.houses.cusps[3];
@@ -37,13 +54,24 @@ window.addEventListener('message', (event) => {
       house2_counterclockwise_delta: mod360(house2 - asc),
       house3_counterclockwise_delta: mod360(house3 - asc),
       cusp_sign_sequence: data.houses.details.slice(0, 4).map((house) => `${house.house}:${house.sign.name}`),
-      zodiac_counterclockwise_from_ascendant: data.houses.details[0].sign.name === 'Tauro' && data.houses.details[1].sign.name === 'Géminis' && data.houses.details[2].sign.name === 'Cáncer',
+      houses_advance_counterclockwise: data.houses.details.every((house, index, rows) => index === 0 || (mod360(house.longitude - rows[index - 1].longitude) > 0 && mod360(house.longitude - rows[index - 1].longitude) < 90)),
+      planet_house_consistency: data.planets.every((planet) => planet.house === houseFor(planet.longitude, data.houses.cusps)),
       true_node_axis: mod360(byKey.true_south_node.longitude - byKey.true_north_node.longitude),
       mean_node_axis: mod360(byKey.mean_south_node.longitude - byKey.mean_north_node.longitude),
       transit_count: data.transits?.planets?.length || 0,
       transit_aspect_count: data.transits?.natal_aspects?.length || 0,
     };
-    document.getElementById('status').textContent = report.true_node_axis === 180 && report.mean_node_axis === 180 ? 'PRUEBA CORRECTA' : 'PRUEBA FALLIDA';
+    if (selectedSample === samples.claudia) {
+      report.reference_match = {
+        ascendant: Math.abs(report.ascendant - 34.933546) < 0.000001,
+        descendant: Math.abs(report.descendant - 214.933546) < 0.000001,
+        mc: Math.abs(report.mc - 299.432185) < 0.000001,
+        ic: Math.abs(report.ic - 119.432185) < 0.000001,
+        cusps: [34.933546,64.715544,92.061149,119.432185,149.147429,181.773785,214.933546,244.715544,272.061149,299.432185,329.147429,1.773785].every((expected, index) => Math.abs(data.houses.cusps[index + 1] - expected) < 0.000001)
+      };
+    }
+    const referenceOk = !report.reference_match || Object.values(report.reference_match).every(Boolean);
+    document.getElementById('status').textContent = report.true_node_axis === 180 && report.mean_node_axis === 180 && report.houses_advance_counterclockwise && report.planet_house_consistency && referenceOk ? 'PRUEBA CORRECTA' : 'PRUEBA FALLIDA';
     document.getElementById('result').textContent = JSON.stringify(report, null, 2);
     document.getElementById('chart').innerHTML = event.data.svg;
   }
