@@ -46,7 +46,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 .topbar { min-height: 82px; padding: 10px clamp(20px, 5vw, 72px); display: flex; align-items: center; justify-content: space-between; gap: 28px; border-bottom: 1px solid rgba(212,175,55,.16); background: rgba(5,5,7,.88); backdrop-filter: blur(18px); position: relative; z-index: 10; }
 .brand { display: flex; align-items: center; text-decoration: none; }
-.brand-logo { width: 105px; height: 58px; padding: 3px 8px; display: block; object-fit: contain; background: #fff; border-radius: 12px; }
+.brand-logo { width: 105px; height: 58px; padding: 0; display: block; object-fit: contain; background: transparent; border-radius: 0; filter: drop-shadow(0 0 13px rgba(212,175,55,.2)); }
 .brand-copy { display: grid; margin-left: 13px; gap: 2px; }
 .brand-copy strong { color: var(--gold-light); font: 700 .92rem/1.1 Cinzel, Georgia, serif; letter-spacing: .08em; text-transform: uppercase; }
 .brand-copy small { color: var(--muted); font-size: .66rem; letter-spacing: .08em; }
@@ -56,6 +56,13 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .public-nav { display: flex; align-items: center; gap: clamp(15px, 2.4vw, 34px); }
 .public-nav a { color: var(--muted); font-size: .8rem; font-weight: 600; letter-spacing: .03em; text-decoration: none; transition: color .2s; }
 .public-nav a:hover { color: var(--gold-light); }
+.theme-toggle { width: 43px; height: 43px; flex: 0 0 auto; display: grid; grid-template-columns: 1fr 1fr; place-items: center; overflow: hidden; padding: 4px; color: var(--gold-light); border: 1px solid rgba(212,175,55,.3); border-radius: 50%; background: rgba(212,175,55,.07); cursor: pointer; transition: transform .2s, background .2s; }
+.theme-toggle:hover { transform: rotate(8deg) scale(1.04); background: rgba(212,175,55,.14); }
+.theme-toggle span { grid-area: 1 / 1; transition: opacity .2s, transform .3s; }
+.theme-toggle .theme-sun { opacity: 1; transform: rotate(0) scale(1); }
+.theme-toggle .theme-moon { opacity: 0; transform: rotate(80deg) scale(.55); }
+html[data-theme="light"] .theme-toggle .theme-sun { opacity: 0; transform: rotate(-80deg) scale(.55); }
+html[data-theme="light"] .theme-toggle .theme-moon { opacity: 1; transform: rotate(0) scale(1); }
 .admin-nav form { margin: 0; }
 .link-button { border: 0; background: none; padding: 0; cursor: pointer; }
 
@@ -495,15 +502,16 @@ td small { margin-top: 5px; }
 .home-quick-links { margin-top: 25px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 27px; }
 .home-quick-links a { color: #aaa6b1; font-size: .78rem; text-decoration: none; border-bottom: 1px solid transparent; }
 .home-quick-links a:hover { color: var(--gold-light); border-color: currentColor; }
-.ms-guide-section { width: min(1260px, calc(100% - 48px)); margin: clamp(80px, 9vw, 138px) auto; display: grid; grid-template-columns: minmax(320px, .75fr) minmax(0, 1.25fr); gap: clamp(45px, 8vw, 110px); align-items: stretch; }
-.ms-guide-photo { min-height: 610px; position: relative; overflow: hidden; border: 1px solid rgba(212,175,55,.22); border-radius: 28px; background: #0b0b0d; box-shadow: 0 28px 70px rgba(0,0,0,.42); }
+.ms-guide-section { width: min(1260px, calc(100% - 48px)); margin: clamp(80px, 9vw, 138px) auto; display: grid; grid-template-columns: 1fr; gap: clamp(45px, 6vw, 78px); align-items: stretch; }
+.ms-guide-photo { min-height: 0; aspect-ratio: 2.25 / 1; position: relative; overflow: hidden; border: 1px solid rgba(212,175,55,.22); border-radius: 28px; background: #0b0b0d; box-shadow: 0 28px 70px rgba(0,0,0,.42); }
 .ms-guide-photo::after { content: "+15 años de experiencia"; position: absolute; left: 24px; bottom: 24px; padding: 9px 14px; border-radius: 999px; color: #16130c; background: var(--gold); font-size: .69rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
-.ms-guide-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 1s ease; }
+.ms-guide-photo img { width: 100%; height: 100%; object-fit: contain; object-position: center; transition: transform 1s ease; }
 .ms-guide-photo:hover img { transform: scale(1.035); }
-.ms-guide-copy { align-self: center; }
+.ms-guide-copy { align-self: center; display: grid; grid-template-columns: minmax(0,.8fr) minmax(560px,1.2fr); column-gap: clamp(45px,7vw,100px); align-items: end; }
+.ms-guide-copy > .eyebrow, .ms-guide-copy > h2, .ms-guide-copy > p { grid-column: 1; }
 .ms-guide-copy > h2, .lottery-heading h2, .social-band h2 { margin: 13px 0 22px; font-size: clamp(2.5rem, 5vw, 4.9rem); line-height: 1.02; letter-spacing: -.045em; }
 .ms-guide-copy > p, .lottery-heading > p, .social-band p { color: var(--muted); font-size: 1rem; line-height: 1.75; }
-.method-grid { margin-top: 38px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.method-grid { grid-column: 2; grid-row: 1 / span 4; margin-top: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .method-grid article { min-height: 285px; padding: 27px; display: flex; flex-direction: column; border: 1px solid rgba(212,175,55,.16); border-radius: 19px; background: linear-gradient(145deg, rgba(30,30,30,.7), rgba(8,8,9,.9)); }
 .method-grid article > span { color: var(--gold); font: 700 .72rem Space Mono, monospace; }
 .method-grid h3 { margin: 29px 0 12px; color: #fff8e5; font-size: 1.55rem; }
@@ -534,6 +542,24 @@ td small { margin-top: 5px; }
 .social-links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px; }
 .social-links a { padding: 10px 14px; color: var(--gold-light); border: 1px solid rgba(212,175,55,.28); border-radius: 999px; text-decoration: none; font-size: .77rem; font-weight: 700; }
 .social-links a:hover { color: #111; background: var(--gold); }
+.media-showcase { width: min(1260px, calc(100% - 48px)); margin: 0 auto clamp(95px, 10vw, 145px); }
+.media-heading { max-width: 850px; margin: 0 auto 42px; text-align: center; }
+.media-heading h2 { margin: 13px 0 18px; font: clamp(2.4rem, 5vw, 5rem)/1 Cinzel, Georgia, serif; letter-spacing: -.045em; }
+.media-heading p { margin: 0; color: var(--muted); line-height: 1.7; }
+.media-grid { display: grid; grid-template-columns: minmax(0,1.2fr) minmax(330px,.8fr); gap: 18px; align-items: stretch; }
+.youtube-panel, .tiktok-panel { overflow: hidden; border: 1px solid rgba(212,175,55,.2); border-radius: 24px; background: linear-gradient(145deg, rgba(30,30,30,.76), rgba(8,8,9,.94)); box-shadow: 0 22px 58px rgba(0,0,0,.28); }
+.video-frame { position: relative; aspect-ratio: 16 / 9; background: #000; }
+.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.media-card-copy, .tiktok-copy { padding: 26px; }
+.media-card-copy > span, .tiktok-copy > span { color: var(--gold); font-size: .68rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+.media-card-copy h3, .tiktok-copy h3 { margin: 10px 0; color: #fff8e5; font-size: 1.45rem; }
+.media-card-copy p, .tiktok-copy p { margin: 0 0 22px; color: var(--muted); line-height: 1.6; }
+.youtube-button, .tiktok-button { display: inline-flex; padding: 11px 15px; border-radius: 10px; text-decoration: none; font-size: .78rem; font-weight: 800; }
+.youtube-button { color: #fff; background: #d31515; }
+.tiktok-button { color: #fff; background: linear-gradient(110deg, #00b9b3, #16131b 38%, #e63070); }
+.tiktok-panel { display: flex; flex-direction: column; justify-content: space-between; }
+.tiktok-panel .tiktok-embed { width: calc(100% - 32px) !important; min-width: 0 !important; margin: 0 16px 16px !important; }
+.media-showcase > .social-links { justify-content: center; }
 .floating-whatsapp { position: fixed; z-index: 30; right: 22px; bottom: 22px; min-width: 58px; min-height: 58px; padding: 0 18px; display: flex; align-items: center; justify-content: center; gap: 9px; color: white; background: #20b85a; border-radius: 999px; box-shadow: 0 12px 35px rgba(32,184,90,.34); text-decoration: none; font-weight: 800; transition: transform .2s; }
 .floating-whatsapp:hover { transform: translateY(-3px) scale(1.02); }
 .floating-whatsapp span { font-size: .76rem; }
@@ -543,7 +569,8 @@ td small { margin-top: 5px; }
 @media (max-width: 1050px) {
   .topbar { align-items: flex-start; }
   .public-nav { justify-content: flex-end; flex-wrap: wrap; gap: 9px 18px; }
-  .ms-guide-section { grid-template-columns: .82fr 1.18fr; }
+  .ms-guide-copy { grid-template-columns: 1fr; }
+  .method-grid { grid-column: 1; grid-row: auto; margin-top: 30px; }
   .precision-band { grid-template-columns: 1fr 1fr; }
   .precision-band div:nth-child(2) { border-right: 0; }
   .precision-band div:nth-child(-n+2) { border-bottom: 1px solid rgba(212,175,55,.13); }
@@ -555,10 +582,10 @@ td small { margin-top: 5px; }
   .public-nav { display: none; }
   .ms-home-hero { min-height: 720px; padding-top: 72px; }
   .ms-home-hero h1 { font-size: clamp(3rem, 15vw, 5.2rem); }
-  .consultation-choices, .ms-guide-section, .method-grid, .lottery-heading, .social-band { grid-template-columns: 1fr; }
+  .consultation-choices, .ms-guide-section, .method-grid, .lottery-heading, .social-band, .media-grid { grid-template-columns: 1fr; }
   .consultation-choice { min-height: 102px; padding: 16px; gap: 13px; }
   .consultation-choice .choice-icon { width: 52px; height: 52px; }
-  .ms-guide-photo { min-height: 490px; }
+  .ms-guide-photo { min-height: 0; aspect-ratio: 2.25 / 1; }
   .precision-band { grid-template-columns: 1fr; }
   .precision-band div { min-height: 105px; border-right: 0; border-bottom: 1px solid rgba(212,175,55,.13); }
   .precision-band div:last-child { border-bottom: 0; }
@@ -573,7 +600,7 @@ td small { margin-top: 5px; }
   .ms-home-hero { min-height: 760px; }
   .consultation-choice { grid-template-columns: auto 1fr; }
   .consultation-choice b { display: none; }
-  .ms-guide-section, .precision-band, .lottery-section, .social-band { width: min(100% - 28px, 1260px); }
+  .ms-guide-section, .precision-band, .lottery-section, .social-band, .media-showcase { width: min(100% - 28px, 1260px); }
   .lottery-grid { grid-template-columns: 1fr; }
 }
 .personal-horoscope-fields{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:20px;border:1px solid rgba(216,190,119,.28);border-radius:18px;background:rgba(216,190,119,.05)}
@@ -584,3 +611,49 @@ td small { margin-top: 5px; }
 @media(max-width:720px){.personal-horoscope-fields{grid-template-columns:1fr}.personal-horoscope-fields .full{grid-column:auto}}
 @media(max-width:720px){.horoscope-personal-cta{align-items:flex-start;flex-direction:column}}
 @media(max-width:900px){.decanate-guide{grid-template-columns:1fr}.decanate-guide ol{grid-template-columns:1fr}}
+
+/* Modo claro inspirado en la portada original de MS Numerología */
+html[data-theme="light"] {
+  color-scheme: light;
+  --ink: #211d18;
+  --muted: #686169;
+  --bg: #f8f5ed;
+  --bg-deep: #eee8dc;
+  --surface: #fffdf8;
+  --surface-2: #f1eadc;
+  --line: rgba(93,70,30,.2);
+  --gold: #a9781d;
+  --gold-light: #7d5815;
+  --shadow: 0 24px 70px rgba(65,47,18,.14);
+}
+html[data-theme="light"] body { color: var(--ink); background: radial-gradient(circle at 50% 0, #fffdf8, #f3ede2 60%, #eae1d2); }
+html[data-theme="light"] body::before { opacity: .22; }
+html[data-theme="light"] body::after { opacity: .09; filter: sepia(1); }
+html[data-theme="light"] .topbar { background: rgba(255,253,248,.9); border-color: rgba(169,120,29,.22); box-shadow: 0 8px 30px rgba(70,48,14,.08); }
+html[data-theme="light"] .brand-copy strong { color: #725015; }
+html[data-theme="light"] .brand-copy small, html[data-theme="light"] .public-nav a, html[data-theme="light"] .admin-nav a, html[data-theme="light"] .link-button { color: #6c6670; }
+html[data-theme="light"] .theme-toggle { color: #6d4b12; background: #fff8e7; }
+html[data-theme="light"] footer { color: #756d62; background: rgba(255,253,248,.65); }
+html[data-theme="light"] .unified-home { background: radial-gradient(ellipse at 50% 0%, #fffaf0 0, #f7f2e8 48rem, #eee6d8 100%); }
+html[data-theme="light"] .ms-home-hero-bg { background: linear-gradient(180deg, rgba(255,253,248,.7), rgba(248,245,237,.82) 58%, #f7f2e8 100%), url('miguel-banner.png') center 18% / cover no-repeat; filter: saturate(.86); }
+html[data-theme="light"] .ms-home-hero::before { background: radial-gradient(circle at 50% 32%, rgba(212,175,55,.2), transparent 34rem), linear-gradient(90deg, rgba(255,255,255,.5), transparent 25%, transparent 75%, rgba(255,255,255,.5)); }
+html[data-theme="light"] .ms-home-hero h1 { background: linear-gradient(135deg, #805b13, #d5a82e 38%, #6d4910 70%, #c29222); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 10px 35px rgba(128,91,19,.12); }
+html[data-theme="light"] .ms-home-lead, html[data-theme="light"] .home-quick-links a { color: #5e5961; }
+html[data-theme="light"] .consultation-choice, html[data-theme="light"] .method-grid article, html[data-theme="light"] .lottery-filters, html[data-theme="light"] .lottery-card, html[data-theme="light"] .youtube-panel, html[data-theme="light"] .tiktok-panel { color: var(--ink); border-color: rgba(169,120,29,.23); background: linear-gradient(145deg, rgba(255,255,255,.96), rgba(246,239,225,.94)); box-shadow: 0 18px 45px rgba(87,61,18,.1); }
+html[data-theme="light"] .consultation-choice strong, html[data-theme="light"] .method-grid h3, html[data-theme="light"] .media-card-copy h3, html[data-theme="light"] .tiktok-copy h3 { color: #2d261c; }
+html[data-theme="light"] .consultation-choice small { color: #7c746b; }
+html[data-theme="light"] .ms-guide-photo { background: #d9cbb8; box-shadow: 0 24px 60px rgba(87,61,18,.16); }
+html[data-theme="light"] .precision-band { background: rgba(255,253,248,.84); box-shadow: 0 18px 50px rgba(87,61,18,.08); }
+html[data-theme="light"] .precision-band strong { color: #352b1d; }
+html[data-theme="light"] .horoscope-preview-grid a, html[data-theme="light"] .horoscope-public-card { background: linear-gradient(145deg, #fffdf8, #f1eadc); }
+html[data-theme="light"] .horoscope-preview-grid a:hover { background: linear-gradient(145deg, #fff9e8, #eadcbd); }
+html[data-theme="light"] .horoscope-coming, html[data-theme="light"] .about-miguel, html[data-theme="light"] .payment-confirmation, html[data-theme="light"] .decanate-guide { background: linear-gradient(135deg, rgba(255,253,248,.96), rgba(238,228,208,.94)); box-shadow: 0 20px 60px rgba(87,61,18,.09); }
+html[data-theme="light"] input, html[data-theme="light"] select, html[data-theme="light"] textarea, html[data-theme="light"] .payment-option, html[data-theme="light"] .payment-fields, html[data-theme="light"] .location-picker, html[data-theme="light"] .delivery-grid > div, html[data-theme="light"] .chat-history { color: #27221b; background: rgba(255,255,255,.8); }
+html[data-theme="light"] input[readonly] { color: #665f57; background: rgba(235,227,212,.72); }
+html[data-theme="light"] label, html[data-theme="light"] .payment-fields legend { color: #3d362e; }
+html[data-theme="light"] .intro-panel { background: linear-gradient(145deg, #fff9eb, #eae0cd 74%); }
+html[data-theme="light"] .form-panel { background: linear-gradient(180deg, rgba(255,253,248,.88), rgba(239,231,216,.96)); }
+html[data-theme="light"] .center-card, html[data-theme="light"] .panel, html[data-theme="light"] .stat-card { background: var(--surface); }
+html[data-theme="light"] .interpretation-text, html[data-theme="light"] .horoscope-public-card .rich-text { color: #3d3832; background: rgba(255,255,255,.58); }
+html[data-theme="light"] .rich-text strong { color: #6d4b12; }
+html[data-theme="light"] .chart-frame, html[data-theme="light"] .chart-zoom-dialog { background: #f3eee5; }

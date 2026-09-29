@@ -5,6 +5,22 @@ const basePath = (() => {
 })();
 const appUrl = (path) => `${basePath}/${String(path).replace(/^\//, '')}`;
 
+const themeToggle = document.querySelector('[data-theme-toggle]');
+if (themeToggle) {
+  const refreshThemeButton = () => {
+    const light = document.documentElement.dataset.theme === 'light';
+    themeToggle.setAttribute('aria-label', light ? 'Activar modo oscuro' : 'Activar modo claro');
+    themeToggle.setAttribute('aria-pressed', String(light));
+  };
+  themeToggle.addEventListener('click', () => {
+    const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem('ms-theme', next); } catch (error) { /* El tema sigue funcionando en esta visita. */ }
+    refreshThemeButton();
+  });
+  refreshThemeButton();
+}
+
 const serviceRequest = document.querySelector('[data-service-request]');
 if (serviceRequest) {
   const fields = serviceRequest.querySelector('[data-personal-horoscope-fields]');

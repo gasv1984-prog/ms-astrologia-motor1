@@ -105,6 +105,10 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
     assert "Consulta de carta astral" in home
     assert "lottery-results" in home
     assert "logo-ms-numerologia.png" in home
+    assert "youtube.com/embed/wum8hs6AV2w" in home
+    assert 'data-unique-id="msnumerologia"' in home
+    assert "data-theme-toggle" in bootstrap
+    assert "localStorage.getItem('ms-theme')" in bootstrap
     assert "miguelsalazarastrologia.com" in bootstrap
     assert "https://miguelsalazarastrologia.com" in engine
     assert "https://www.miguelsalazarastrologia.com" in engine
