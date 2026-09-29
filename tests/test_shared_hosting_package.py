@@ -103,17 +103,30 @@ def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
 
     assert "Consulta de numerología" in home
     assert "Consulta de carta astral" in home
+    assert "+100.000" in home
+    assert "Seguidores en la comunidad" in home
+    assert "Rituales de limpieza" in home
+    assert "Estudios numerológicos" in home
+    assert "Números del día" in home
+    assert "Historias de transformación" in home
+    assert "Consultar mi horóscopo" in home
     assert "service-numerologia-v1.png" in home
     assert "service-carta-astral-v1.png" in home
     assert "lottery-results" in home
     assert "logo-ms-numerologia.png" in home
     assert "youtube.com/embed/wum8hs6AV2w" in home
     assert 'data-unique-id="msnumerologia"' in home
+    assert 'data-embed-from="oembed"' in home
     assert 'style="max-width: 780px; min-width: 288px;"' in home
+    assert "data-tiktok-retry" in home
+    assert "https://www.tiktok.com/embed.js" in home
     assert "data-theme-toggle" in bootstrap
     assert "localStorage.getItem('ms-theme')" in bootstrap
     styles = (HOSTING / "assets" / "styles.css").read_text(encoding="utf-8")
     assert 'html[data-theme="light"] .lottery-card strong' in styles
+    browser_js = (HOSTING / "assets" / "app.js").read_text(encoding="utf-8")
+    assert "data-tiktok-embed-wrap" in home
+    assert "msTiktokEmbed" in browser_js
     assert "miguelsalazarastrologia.com" in bootstrap
     assert "https://miguelsalazarastrologia.com" in engine
     assert "https://www.miguelsalazarastrologia.com" in engine

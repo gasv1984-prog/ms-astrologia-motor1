@@ -30,7 +30,7 @@ localmente las posiciones tropicales, las casas Placidus y los aspectos. El SVG
 y los datos técnicos se validan y guardan después en MySQL. No requiere VPS,
 RapidAPI ni una clave astrológica.
 
-La versión 0.8.3 integra la identidad visual de MS Numerología en
+La versión 0.8.5 integra la identidad visual de MS Numerología en
 `miguelsalazarastrologia.com`, configura de forma predeterminada el motor
 gratuito de GitHub Pages y conserva la orientación tradicional: las casas avanzan en
 sentido contrario a las manecillas del reloj desde el Ascendente, el MC queda
@@ -74,7 +74,7 @@ La portada incluye modo claro y oscuro, logo transparente, fotografía completa,
 video de YouTube, acceso al canal oficial y perfil integrado de TikTok.
 
 Si actualizas una instalación anterior, cambia `app_url` en `config.php` a
-`https://miguelsalazarastrologia.com`. La versión 0.8.3 también detecta el nuevo
+`https://miguelsalazarastrologia.com`. La versión 0.8.5 también detecta el nuevo
 host en cada petición para que la transición no rompa los enlaces.
 
 Desde la versión 0.5.1 la aplicación también unifica automáticamente la sesión

@@ -106,6 +106,31 @@ document.querySelectorAll('[data-chart-expand]').forEach((button) => {
   });
 });
 
+const tiktokEmbedWrap = document.querySelector('[data-tiktok-embed-wrap]');
+const tiktokRetry = document.querySelector('[data-tiktok-retry]');
+if (tiktokEmbedWrap && tiktokRetry) {
+  const officialEmbed = tiktokEmbedWrap.innerHTML;
+  tiktokRetry.addEventListener('click', () => {
+    tiktokRetry.disabled = true;
+    tiktokRetry.textContent = 'Cargando videos…';
+    tiktokEmbedWrap.innerHTML = officialEmbed;
+    document.querySelectorAll('script[data-ms-tiktok-embed]').forEach((script) => script.remove());
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.msTiktokEmbed = '';
+    script.src = `https://www.tiktok.com/embed.js?reload=${Date.now()}`;
+    script.addEventListener('load', () => {
+      tiktokRetry.disabled = false;
+      tiktokRetry.textContent = 'Recargar videos ↻';
+    });
+    script.addEventListener('error', () => {
+      tiktokRetry.disabled = false;
+      tiktokRetry.textContent = 'Intentar nuevamente ↻';
+    });
+    document.body.append(script);
+  });
+}
+
 (() => {
   const revealItems = [...document.querySelectorAll('.reveal')];
   if (!revealItems.length) return;
