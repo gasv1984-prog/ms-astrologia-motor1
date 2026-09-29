@@ -7,7 +7,7 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 <section class="ms-home-hero" aria-labelledby="home-title">
   <div class="ms-home-hero-bg" aria-hidden="true"></div>
   <div class="ms-home-hero-content reveal">
-    <img class="ms-home-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.1')) ?>" alt="Miguel Salazar">
+    <img class="ms-home-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.2')) ?>" alt="Miguel Salazar">
     <div class="eyebrow">Numerología · Astrología · Crecimiento personal</div>
     <h1 id="home-title">Miguel Salazar</h1>
     <p class="ms-home-lead">Dos caminos para comprender tus ciclos, reconocer tus talentos y tomar decisiones con mayor claridad.</p>
@@ -24,7 +24,7 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 </section>
 
 <section class="ms-guide-section reveal">
-  <div class="ms-guide-photo"><img src="<?= e(url('assets/miguel-pointing.png?v=0.8.1')) ?>" alt="Miguel Salazar, numerólogo y astrólogo"></div>
+  <div class="ms-guide-photo"><img src="<?= e(url('assets/miguel-pointing.png?v=0.8.2')) ?>" alt="Miguel Salazar, numerólogo y astrólogo"></div>
   <div class="ms-guide-copy"><div class="eyebrow">Una orientación personal</div><h2>Elige la lectura que responde a tu momento.</h2><p>La numerología interpreta la vibración de tu nombre y tu fecha. La carta astral calcula la posición real del cielo en el instante y lugar exactos de tu nacimiento.</p>
     <div class="method-grid">
       <article><span>01</span><h3>Numerología</h3><p>Camino de vida, talentos, desafíos, propósito y ciclo personal actual.</p><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20mi%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">Solicitar por WhatsApp →</a></article>
@@ -58,7 +58,7 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
   <div class="media-heading"><div class="eyebrow">Comunidad MS</div><h2>Videos y orientación para tu crecimiento.</h2><p>Conoce el contenido de Miguel Salazar y sigue las publicaciones de numerología, astrología y ciclos personales.</p></div>
   <div class="media-grid">
     <article class="youtube-panel"><div class="video-frame"><iframe src="https://www.youtube.com/embed/wum8hs6AV2w?si=LoQ65fAvcCpJ7Qkg" title="Video de Miguel Salazar en YouTube" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div><div class="media-card-copy"><span>YouTube</span><h3>Canal oficial MS Numerología</h3><p>Videos, predicciones y herramientas para acompañar tu proceso.</p><a class="youtube-button" href="https://www.youtube.com/@MSnumerologia" target="_blank" rel="noreferrer">Visitar el canal →</a></div></article>
-    <article class="tiktok-panel"><div class="tiktok-copy"><span>TikTok</span><h3>@msnumerologia</h3><p>Consulta el perfil y descubre nuevos videos breves de Miguel.</p><a class="tiktok-button" href="https://www.tiktok.com/@msnumerologia" target="_blank" rel="noreferrer">Abrir TikTok →</a></div><blockquote class="tiktok-embed" cite="https://www.tiktok.com/@msnumerologia" data-unique-id="msnumerologia" data-embed-type="creator"><section><a target="_blank" href="https://www.tiktok.com/@msnumerologia?refer=creator_embed">@msnumerologia</a></section></blockquote></article>
+    <article class="tiktok-panel"><div class="tiktok-copy"><span>TikTok</span><h3>@msnumerologia</h3><p>Consulta el perfil y descubre nuevos videos breves de Miguel.</p><a class="tiktok-button" href="https://www.tiktok.com/@msnumerologia" target="_blank" rel="noreferrer">Abrir TikTok →</a></div><blockquote class="tiktok-embed" cite="https://www.tiktok.com/@msnumerologia" data-unique-id="msnumerologia" data-embed-type="creator" style="max-width: 780px; min-width: 288px;"><section><a target="_blank" href="https://www.tiktok.com/@msnumerologia?refer=creator_embed">@msnumerologia</a></section></blockquote></article>
   </div>
   <div class="social-links"><a href="https://www.instagram.com/msnumerologia/" target="_blank" rel="noreferrer">Instagram</a><a href="https://www.facebook.com/MiguelSalazarNumerologo/" target="_blank" rel="noreferrer">Facebook</a><a href="https://twitter.com/msnumerologia" target="_blank" rel="noreferrer">X</a></div>
 </section>
