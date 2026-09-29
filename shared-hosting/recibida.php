@@ -23,7 +23,7 @@ render_header('Solicitud recibida');
   <div class="eyebrow">Solicitud recibida</div>
   <h1>Gracias, <?= e($item['full_name']) ?>.</h1>
   <p>Recibimos tu solicitud de <strong><?= e($serviceLabel) ?></strong>.</p>
-  <p>Guarda este código junto con la contraseña que creaste:</p>
+  <p>Guarda este código. Para consultar el estado usarás este código y el mismo correo electrónico de la solicitud:</p>
   <div class="request-code"><?= e($item['public_id']) ?></div>
   <div class="payment-next-step">
     <strong>Siguiente paso</strong>
@@ -31,7 +31,7 @@ render_header('Solicitud recibida');
   </div>
   <div class="hero-actions received-actions">
     <a class="whatsapp-button" href="<?= e($whatsappUrl) ?>" target="_blank" rel="noreferrer"><span class="whatsapp-icon">◉</span><span>Confirmar pago por WhatsApp<small>+57 313 700 9000</small></span><b>→</b></a>
-    <a class="secondary-button" href="<?= e(url('mi-solicitud.php')) ?>">Consultar estado</a>
+    <a class="secondary-button" href="<?= e(url('mi-solicitud.php?id=' . rawurlencode((string)$item['public_id']))) ?>">Consultar estado</a>
     <a class="text-link" href="<?= e(url()) ?>">Volver al inicio</a>
   </div>
 </section>

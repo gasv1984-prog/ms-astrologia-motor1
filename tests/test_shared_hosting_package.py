@@ -95,6 +95,30 @@ def test_personal_horoscope_keeps_natal_calculation_and_transits():
     assert "No uses Markdown" in astrology
 
 
+def test_request_uses_email_tracking_and_records_policy_consent():
+    form = (HOSTING / "solicitar.php").read_text(encoding="utf-8")
+    tracker = (HOSTING / "mi-solicitud.php").read_text(encoding="utf-8")
+    received = (HOSTING / "recibida.php").read_text(encoding="utf-8")
+    policies = (HOSTING / "politicas.php").read_text(encoding="utf-8")
+    schema = (HOSTING / "database" / "schema.sql").read_text(encoding="utf-8")
+    bootstrap = (HOSTING / "inc" / "bootstrap.php").read_text(encoding="utf-8")
+    admin = (HOSTING / "admin" / "solicitud.php").read_text(encoding="utf-8")
+
+    assert 'name="request_password"' not in form
+    assert 'name="terms_acceptance"' in form
+    assert 'name="data_consent"' in form
+    assert "terms_accepted_at" in schema
+    assert "privacy_accepted_at" in schema
+    assert "consent_version" in schema
+    assert "terms_accepted_at" in bootstrap
+    assert "hash_equals(strtolower((string)$candidate['email']), $email)" in tracker
+    assert 'name="password"' not in tracker
+    assert 'name="email"' in tracker
+    assert "mismo correo electrónico" in received
+    assert "Ley 1581 de 2012" in policies
+    assert "Versión del consentimiento" in admin
+
+
 def test_unified_home_uses_new_domain_and_keeps_both_consultation_paths():
     home = (HOSTING / "index.php").read_text(encoding="utf-8")
     bootstrap = (HOSTING / "inc" / "bootstrap.php").read_text(encoding="utf-8")

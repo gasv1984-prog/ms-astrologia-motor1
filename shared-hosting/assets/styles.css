@@ -68,6 +68,9 @@ html[data-theme="light"] .theme-toggle .theme-moon { opacity: 1; transform: rota
 
 main { min-height: calc(100vh - 148px); }
 footer { min-height: 72px; padding: 20px clamp(20px, 5vw, 72px); border-top: 1px solid var(--line); display: flex; justify-content: space-between; gap: 20px; color: #77758a; font-size: .78rem; }
+.footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 18px; }
+.footer-links a { color: var(--gold-light); text-decoration: none; }
+.footer-links a:hover { text-decoration: underline; }
 
 .request-shell { min-height: calc(100vh - 76px); display: grid; grid-template-columns: minmax(0, .87fr) minmax(560px, 1.13fr); }
 .intro-panel { position: relative; overflow: hidden; padding: clamp(56px, 7vw, 104px) clamp(30px, 6vw, 92px); background: linear-gradient(145deg, #121126, #090816 74%); border-right: 1px solid var(--line); }
@@ -103,6 +106,11 @@ small { display: block; color: #77758a; font-size: .72rem; font-weight: 400; }
 .optional { color: #79768c; font-size: .72rem; font-weight: 400; }
 .consent { grid-template-columns: 20px 1fr; align-items: start; color: var(--muted); font-weight: 400; line-height: 1.5; }
 .consent input { width: 18px; height: 18px; accent-color: var(--gold); }
+.consent a { color: var(--gold-light); }
+.policy-consents { padding: 20px; display: grid; gap: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(8,7,18,.25); }
+.policy-consents > strong { color: var(--cream); }
+.policy-consents > p { margin: 0; color: var(--muted); font-size: .75rem; line-height: 1.6; }
+.privacy-hint { margin-top: 24px; color: var(--muted); font-size: .78rem; }
 .payment-fields { padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: rgba(8,7,18,.25); }
 .payment-fields legend { padding: 0 6px; color: #dad7e3; font-size: .85rem; font-weight: 600; }
 .payment-fields > p { margin: 0 0 14px; color: var(--muted); font-size: .78rem; line-height: 1.5; }
@@ -151,6 +159,24 @@ small { display: block; color: #77758a; font-size: .72rem; font-weight: 400; }
 .track-card { max-width: 680px; }
 .tracking-result { margin-top: 27px; text-align: left; }
 .tracking-result h2 { margin: 18px 0; font: 2rem Georgia, serif; }
+.legal-body main { background: radial-gradient(circle at 50% 0, rgba(216,190,119,.09), transparent 36rem); }
+.legal-page { width: min(1120px, calc(100% - 48px)); margin: clamp(50px, 7vw, 100px) auto; }
+.legal-hero { padding: clamp(32px, 6vw, 70px); border: 1px solid var(--line); border-radius: 28px; background: radial-gradient(circle at 85% 10%, rgba(120,91,162,.2), transparent 28rem), linear-gradient(145deg, rgba(30,30,30,.78), rgba(8,8,9,.95)); box-shadow: var(--shadow); }
+.legal-hero h1 { max-width: 850px; margin: 16px 0 20px; font: clamp(2.8rem, 6vw, 5.6rem)/.98 Cinzel, Georgia, serif; letter-spacing: -.045em; }
+.legal-hero > p { color: var(--muted); }
+.legal-hero nav { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
+.legal-hero nav a { padding: 10px 14px; color: var(--gold-light); border: 1px solid rgba(212,175,55,.3); border-radius: 999px; text-decoration: none; font-size: .78rem; font-weight: 700; }
+.legal-section { margin-top: 22px; padding: clamp(28px, 5vw, 58px); display: grid; grid-template-columns: 64px minmax(0,1fr); gap: clamp(20px, 4vw, 45px); scroll-margin-top: 110px; border: 1px solid var(--line); border-radius: 24px; background: var(--surface); box-shadow: 0 22px 58px rgba(0,0,0,.18); }
+.legal-number { width: 58px; height: 58px; display: grid; place-items: center; color: var(--gold); border: 1px solid rgba(212,175,55,.32); border-radius: 16px; font: 700 .8rem Space Mono, monospace; }
+.legal-section h2 { margin: 0 0 28px; color: var(--cream); font: clamp(2rem, 4vw, 3.3rem)/1.05 Cinzel, Georgia, serif; }
+.legal-section h3 { margin: 29px 0 10px; color: var(--gold-light); font: 700 1rem Cinzel, Georgia, serif; }
+.legal-section p, .legal-section li { color: var(--muted); line-height: 1.75; }
+.legal-section a { color: var(--gold-light); }
+.legal-section ul { padding-left: 20px; }
+.legal-cta { margin-top: 22px; padding: clamp(25px, 4vw, 42px); display: flex; align-items: center; justify-content: space-between; gap: 28px; border: 1px solid rgba(212,175,55,.24); border-radius: 22px; background: linear-gradient(120deg, rgba(212,175,55,.1), rgba(120,91,162,.1)); }
+.legal-cta strong { color: var(--cream); font: 700 1.3rem Cinzel, Georgia, serif; }
+.legal-cta p { margin: 8px 0 0; color: var(--muted); }
+.legal-cta .primary-button { flex: 0 0 auto; text-decoration: none; }
 .track-note { padding: 15px 17px; color: var(--muted); background: rgba(216,182,111,.07); border-left: 3px solid var(--gold); border-radius: 0 9px 9px 0; line-height: 1.6; }
 
 .brand-hero { min-height: calc(100vh - 76px); padding: clamp(60px, 8vw, 118px) clamp(24px, 7vw, 110px); display: grid; grid-template-columns: 1.05fr .95fr; align-items: center; gap: clamp(35px, 7vw, 110px); overflow: hidden; background: radial-gradient(circle at 77% 44%, rgba(216,182,111,.12), transparent 27rem), linear-gradient(145deg, #0a0912, #151326 70%, #0b0a13); }
@@ -645,6 +671,11 @@ td small { margin-top: 5px; }
   .social-band > img { width: min(280px, 100%); justify-self: center; }
   .floating-whatsapp span { display: none; }
   .floating-whatsapp { width: 58px; padding: 0; }
+  .legal-section { grid-template-columns: 1fr; }
+  .legal-cta { align-items: flex-start; flex-direction: column; }
+  .legal-cta .primary-button { width: 100%; }
+  .policy-consents { padding: 16px; }
+  footer { align-items: center; text-align: center; }
 }
 @media (max-width: 520px) {
   .ms-home-hero { min-height: 760px; }
@@ -652,6 +683,7 @@ td small { margin-top: 5px; }
   .consultation-choice b { display: none; }
   .ms-guide-section, .precision-band, .community-proof, .service-universe, .success-stories, .lottery-section, .social-band, .media-showcase { width: min(100% - 28px, 1260px); }
   .lottery-grid { grid-template-columns: 1fr; }
+  .legal-page { width: min(100% - 28px, 1120px); }
 }
 .personal-horoscope-fields{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;padding:20px;border:1px solid rgba(216,190,119,.28);border-radius:18px;background:rgba(216,190,119,.05)}
 .personal-horoscope-fields.is-visible{display:grid;animation:reveal-up .35s ease both}.personal-horoscope-fields .full{grid-column:1/-1}.service-choice{border:0;padding:0;margin:0}.service-choice legend{font-weight:700;margin-bottom:12px}
@@ -716,3 +748,7 @@ html[data-theme="light"] .center-card, html[data-theme="light"] .panel, html[dat
 html[data-theme="light"] .interpretation-text, html[data-theme="light"] .horoscope-public-card .rich-text { color: #3d3832; background: rgba(255,255,255,.58); }
 html[data-theme="light"] .rich-text strong { color: #6d4b12; }
 html[data-theme="light"] .chart-frame, html[data-theme="light"] .chart-zoom-dialog { background: #f3eee5; }
+html[data-theme="light"] .policy-consents { background: rgba(255,255,255,.62); }
+html[data-theme="light"] .policy-consents > strong, html[data-theme="light"] .legal-section h2, html[data-theme="light"] .legal-cta strong { color: #2d261c; }
+html[data-theme="light"] .legal-hero { background: radial-gradient(circle at 85% 10%, rgba(120,91,162,.1), transparent 28rem), linear-gradient(145deg, #fffdf8, #eee6d8); }
+html[data-theme="light"] .legal-section { background: rgba(255,253,248,.94); box-shadow: 0 22px 58px rgba(87,61,18,.09); }

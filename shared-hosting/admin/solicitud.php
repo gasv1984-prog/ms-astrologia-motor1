@@ -147,6 +147,7 @@ render_header($serviceName . ' ' . $item['public_id'], 'admin-page', true);
     <article class="panel data-panel">
       <div class="panel-heading"><span class="step">01</span><div><h2>Datos de nacimiento</h2><p>Base exacta del cálculo astronómico.</p></div></div>
       <dl class="data-list"><div><dt>Fecha</dt><dd><?= e($item['birth_date']) ?></dd></div><div><dt>Hora local</dt><dd><?= e(substr($item['birth_time'], 0, 5)) ?></dd></div><div class="wide"><dt>Lugar</dt><dd><?= e($item['birthplace']) ?></dd></div><div><dt>Latitud</dt><dd><?= e($item['latitude']) ?></dd></div><div><dt>Longitud</dt><dd><?= e($item['longitude']) ?></dd></div><div><dt>Zona horaria</dt><dd><?= e($item['timezone']) ?></dd></div></dl>
+      <?php if (!empty($item['consent_version'])): ?><dl class="data-list"><div><dt>Políticas aceptadas</dt><dd><?= e((string)($item['terms_accepted_at'] ?? '—')) ?></dd></div><div><dt>Datos autorizados</dt><dd><?= e((string)($item['privacy_accepted_at'] ?? '—')) ?></dd></div><div class="wide"><dt>Versión del consentimiento</dt><dd><?= e($item['consent_version']) ?></dd></div></dl><?php endif; ?>
       <?php if ($isPersonalHoroscope): ?><dl class="data-list"><div><dt>Período</dt><dd><?= e(['daily'=>'Diario','weekly'=>'Semanal','monthly'=>'Mensual'][$item['horoscope_period']] ?? 'Personalizado') ?></dd></div><div><dt>Fecha de referencia</dt><dd><?= e($item['horoscope_date']) ?></dd></div><?php if ($item['horoscope_focus']): ?><div class="wide"><dt>Consulta</dt><dd><?= e($item['horoscope_focus']) ?></dd></div><?php endif; ?></dl><?php endif; ?>
       <?php if ($item['notes']): ?><p><?= nl2br(e($item['notes'])) ?></p><?php endif; ?>
       <?php if ($engine && $engine['mode'] === 'github_pages'):
@@ -192,5 +193,5 @@ render_header($serviceName . ' ' . $item['public_id'], 'admin-page', true);
     <?php if ($ready): ?><p>El resultado está habilitado. <?= $item['notified_at'] ? 'Correo enviado el ' . e($item['notified_at']) : 'El correo automático aún no está registrado como enviado.' ?></p><div class="button-row"><a class="primary-button" href="<?= e($resultUrl) ?>" target="_blank">Abrir resultado</a><a class="secondary-button" href="<?= e($mailUrl) ?>">Correo manual</a><a class="secondary-button" href="<?= e($whatsUrl) ?>" target="_blank">WhatsApp</a><form method="post"><?= csrf_field() ?><button class="secondary-button" name="action" value="notify">Reintentar correo</button></form></div><?php else: ?><p>Confirma el pago y guarda la interpretación para habilitar el enlace privado.</p><?php endif; ?>
   </section>
 </section>
-<?php if ($engine && $engine['mode'] === 'github_pages'): ?><script defer src="<?= e(url('assets/github-chart-client.js?v=0.8.7')) ?>"></script><?php endif; ?>
+<?php if ($engine && $engine['mode'] === 'github_pages'): ?><script defer src="<?= e(url('assets/github-chart-client.js?v=0.8.8')) ?>"></script><?php endif; ?>
 <?php render_footer();

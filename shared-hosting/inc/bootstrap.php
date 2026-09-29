@@ -292,9 +292,9 @@ function render_header(string $title, string $bodyClass = '', bool $adminArea = 
     $flash = take_flash();
     ?><!doctype html>
 <html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="description" content="Consultas de numerología, carta astral precisa y horóscopos por decanatos con Miguel Salazar."><meta property="og:title" content="Miguel Salazar · Numerología y Astrología"><meta property="og:description" content="Numerología, carta astral calculada con Swiss Ephemeris y orientación personal."><meta property="og:image" content="<?= e(url('assets/miguel-banner.png')) ?>"><meta property="og:url" content="<?= e(url()) ?>">
-<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.7')) ?>">
-<script>try{document.documentElement.dataset.theme=localStorage.getItem('ms-theme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script><link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.8.7')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.8.7')) ?>"></script></head>
-<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.7')) ?>" alt="Miguel Salazar"><span class="brand-copy"><strong>Miguel Salazar</strong><small>Numerología · Astrología</small></span></a>
+<title><?= e($title) ?></title><link rel="icon" href="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.8')) ?>">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem('ms-theme')||'dark'}catch(e){document.documentElement.dataset.theme='dark'}</script><link rel="stylesheet" href="<?= e(url('assets/styles.css?v=0.8.8')) ?>"><script defer src="<?= e(url('assets/app.js?v=0.8.8')) ?>"></script></head>
+<body class="<?= e($bodyClass) ?>"><header class="topbar"><a class="brand" href="<?= e(url()) ?>"><img class="brand-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.8')) ?>" alt="Miguel Salazar"><span class="brand-copy"><strong>Miguel Salazar</strong><small>Numerología · Astrología</small></span></a>
 <?php if ($adminArea && $admin): ?><nav class="admin-nav"><a href="<?= e(url('admin/index.php')) ?>">Solicitudes</a><a href="<?= e(url('admin/astrologia.php')) ?>">Motor astrológico</a><a href="<?= e(url('admin/horoscopos.php')) ?>">Horóscopos</a><a href="<?= e(url('admin/ia.php')) ?>">Inteligencia artificial</a><a href="<?= e(url('admin/perfil.php')) ?>">Perfil</a><form action="<?= e(url('admin/logout.php')) ?>" method="post"><?= csrf_field() ?><button class="link-button">Salir</button></form></nav>
 <?php else: ?><nav class="public-nav"><a href="<?= e(url()) ?>">Inicio</a><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20una%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">Numerología</a><a href="<?= e(url('solicitar.php')) ?>">Carta astral</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar</a><a href="<?= e(url('admin/login.php')) ?>">Administración</a></nav><?php endif; ?><button class="theme-toggle" type="button" data-theme-toggle aria-label="Activar modo claro" title="Cambiar modo claro u oscuro"><span class="theme-sun">☀</span><span class="theme-moon">☾</span></button></header><main>
 <?php if ($flash): ?><div class="alert <?= e($flash['type']) ?>" role="alert"><?= e($flash['message']) ?></div><?php endif; ?>
@@ -303,7 +303,7 @@ function render_header(string $title, string $bodyClass = '', bool $adminArea = 
 
 function render_footer(): void
 {
-    ?></main><footer><span>Miguel Salazar · Numerología y Astrología</span><span>miguelsalazarastrologia.com</span></footer></body></html><?php
+    ?></main><footer><span>Miguel Salazar · Numerología y Astrología</span><nav class="footer-links"><a href="<?= e(url('politicas.php#condiciones')) ?>">Políticas de uso</a><a href="<?= e(url('politicas.php#datos')) ?>">Tratamiento de datos</a></nav><span>miguelsalazarastrologia.com</span></footer></body></html><?php
 }
 
 function auto_install_if_enabled(): void
@@ -473,6 +473,9 @@ function ensure_feature_schema(): void
         'horoscope_period' => "ALTER TABLE service_requests ADD COLUMN horoscope_period ENUM('daily','weekly','monthly') NULL AFTER service_type",
         'horoscope_date' => 'ALTER TABLE service_requests ADD COLUMN horoscope_date DATE NULL AFTER horoscope_period',
         'horoscope_focus' => 'ALTER TABLE service_requests ADD COLUMN horoscope_focus VARCHAR(500) NULL AFTER horoscope_date',
+        'terms_accepted_at' => 'ALTER TABLE service_requests ADD COLUMN terms_accepted_at DATETIME NULL AFTER request_password_hash',
+        'privacy_accepted_at' => 'ALTER TABLE service_requests ADD COLUMN privacy_accepted_at DATETIME NULL AFTER terms_accepted_at',
+        'consent_version' => 'ALTER TABLE service_requests ADD COLUMN consent_version VARCHAR(30) NULL AFTER privacy_accepted_at',
     ];
     foreach ($migrations as $name => $sql) {
         if (!isset($columns[$name])) {

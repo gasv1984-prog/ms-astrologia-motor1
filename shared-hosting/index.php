@@ -7,16 +7,16 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 <section class="ms-home-hero" aria-labelledby="home-title">
   <div class="ms-home-hero-bg" aria-hidden="true"></div>
   <div class="ms-home-hero-content reveal">
-    <img class="ms-home-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.7')) ?>" alt="Miguel Salazar">
+    <img class="ms-home-logo" src="<?= e(url('assets/logo-ms-numerologia.png?v=0.8.8')) ?>" alt="Miguel Salazar">
     <div class="eyebrow">Numerología · Astrología · Crecimiento personal</div>
     <h1 id="home-title">Miguel Salazar</h1>
     <p class="ms-home-lead">Dos caminos para comprender tus ciclos, reconocer tus talentos y tomar decisiones con mayor claridad.</p>
     <div class="consultation-choices" aria-label="Elige tu consulta">
       <a class="consultation-choice numerology-choice" href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20solicitar%20una%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">
-        <img class="choice-art" src="<?= e(url('assets/service-numerologia-v1.png?v=0.8.7')) ?>" alt="Emblema de numerología"><span><small>Camino de vida y ciclos</small><strong>Consulta de numerología</strong></span><b>→</b>
+        <img class="choice-art" src="<?= e(url('assets/service-numerologia-v1.png?v=0.8.8')) ?>" alt="Emblema de numerología"><span><small>Camino de vida y ciclos</small><strong>Consulta de numerología</strong></span><b>→</b>
       </a>
       <a class="consultation-choice astrology-choice" href="<?= e(url('solicitar.php')) ?>">
-        <img class="choice-art" src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.7')) ?>" alt="Mapa cósmico de carta astral"><span><small>Carta calculada con precisión</small><strong>Consulta de carta astral</strong></span><b>→</b>
+        <img class="choice-art" src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.8')) ?>" alt="Mapa cósmico de carta astral"><span><small>Carta calculada con precisión</small><strong>Consulta de carta astral</strong></span><b>→</b>
       </a>
     </div>
     <div class="home-quick-links"><a href="<?= e(url('mi-solicitud.php')) ?>">Consultar una solicitud</a><a href="<?= e(url('horoscopo.php')) ?>">Horóscopo</a><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20necesito%20orientaci%C3%B3n%20para%20elegir%20mi%20consulta" target="_blank" rel="noreferrer">Hablar con Miguel</a></div>
@@ -24,11 +24,11 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 </section>
 
 <section class="ms-guide-section reveal">
-  <div class="ms-guide-photo"><img src="<?= e(url('assets/miguel-pointing.png?v=0.8.7')) ?>" alt="Miguel Salazar, numerólogo y astrólogo"></div>
+  <div class="ms-guide-photo"><img src="<?= e(url('assets/miguel-pointing.png?v=0.8.8')) ?>" alt="Miguel Salazar, numerólogo y astrólogo"></div>
   <div class="ms-guide-copy"><div class="eyebrow">Una orientación personal</div><h2>Elige la lectura que responde a tu momento.</h2><p>La numerología interpreta la vibración de tu nombre y tu fecha. La carta astral calcula la posición real del cielo en el instante y lugar exactos de tu nacimiento.</p>
     <div class="method-grid">
-      <article><div class="method-card-visual"><span>01</span><img src="<?= e(url('assets/service-numerologia-v1.png?v=0.8.7')) ?>" alt="Instrumento celestial de numerología"></div><h3>Numerología</h3><p>Camino de vida, talentos, desafíos, propósito y ciclo personal actual.</p><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20mi%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">Solicitar por WhatsApp →</a></article>
-      <article><div class="method-card-visual"><span>02</span><img src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.7')) ?>" alt="Mapa cósmico de carta astral"></div><h3>Carta astral</h3><p>Ascendente, casas Placidus, planetas, nodos, aspectos y una lectura dirigida a ti.</p><a href="<?= e(url('solicitar.php')) ?>">Crear solicitud →</a></article>
+      <article><div class="method-card-visual"><span>01</span><img src="<?= e(url('assets/service-numerologia-v1.png?v=0.8.8')) ?>" alt="Instrumento celestial de numerología"></div><h3>Numerología</h3><p>Camino de vida, talentos, desafíos, propósito y ciclo personal actual.</p><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20mi%20consulta%20de%20numerolog%C3%ADa" target="_blank" rel="noreferrer">Solicitar por WhatsApp →</a></article>
+      <article><div class="method-card-visual"><span>02</span><img src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.8')) ?>" alt="Mapa cósmico de carta astral"></div><h3>Carta astral</h3><p>Ascendente, casas Placidus, planetas, nodos, aspectos y una lectura dirigida a ti.</p><a href="<?= e(url('solicitar.php')) ?>">Crear solicitud →</a></article>
     </div>
   </div>
 </section>
@@ -46,11 +46,11 @@ render_header('Miguel Salazar · Numerología y astrología', 'landing-page unif
 <section class="service-universe reveal" aria-labelledby="service-universe-title">
   <div class="service-universe-heading"><div class="eyebrow">Acompañamiento integral</div><h2 id="service-universe-title">Una guía para cada momento de tu camino.</h2><p>Elige el contenido o la consulta que necesitas. Cada servicio combina experiencia, escucha y una orientación clara para ti.</p></div>
   <div class="service-universe-grid">
-    <article><img class="service-card-art" src="<?= e(url('assets/service-mensajes-positivos-v1.png?v=0.8.7')) ?>" alt="Libro luminoso de mensajes positivos"><div><h3>Mensajes positivos</h3><p>Contenido de crecimiento personal, propósito y superación para transformar tu mentalidad.</p></div><a href="https://www.youtube.com/@MSnumerologia" target="_blank" rel="noreferrer">Ver mensajes →</a></article>
-    <article><img class="service-card-art" src="<?= e(url('assets/service-ritual-limpieza-v1.png?v=0.8.7')) ?>" alt="Cuenco ceremonial de limpieza energética"><div><h3>Rituales de limpieza</h3><p>Orientación personalizada para protección, renovación y armonización de tu campo energético.</p></div><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20ritual%20de%20limpieza" target="_blank" rel="noreferrer">Solicitar ritual →</a></article>
-    <article><img class="service-card-art" src="<?= e(url('assets/service-estudio-numerologico-v1.png?v=0.8.7')) ?>" alt="Matriz profesional de estudio numerológico"><div><h3>Estudios numerológicos</h3><p>Análisis de nombre, fecha de nacimiento, talentos, desafíos, propósito y ciclos personales.</p></div><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20solicitar%20un%20estudio%20numerol%C3%B3gico" target="_blank" rel="noreferrer">Pedir mi estudio →</a></article>
-    <article><img class="service-card-art" src="<?= e(url('assets/service-numeros-dia-v1.png?v=0.8.7')) ?>" alt="Rueda celestial de números del día"><div><h3>Números del día</h3><p>Predicciones, números clave y recomendaciones para acompañar tus decisiones cotidianas.</p></div><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20recibir%20los%20n%C3%BAmeros%20del%20d%C3%ADa" target="_blank" rel="noreferrer">Recibir mis números →</a></article>
-    <article class="horoscope-service"><img class="horoscope-service-art" src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.7')) ?>" alt="Mapa cósmico del horóscopo"><div><small>Doce signos · tres decanatos</small><h3>Horóscopo</h3><p>Consulta la orientación general de tu signo o solicita una lectura personalizada calculada desde tu carta natal.</p></div><a class="horoscope-service-button" href="<?= e(url('horoscopo.php')) ?>">Consultar mi horóscopo →</a></article>
+    <article><img class="service-card-art" src="<?= e(url('assets/service-mensajes-positivos-v1.png?v=0.8.8')) ?>" alt="Libro luminoso de mensajes positivos"><div><h3>Mensajes positivos</h3><p>Contenido de crecimiento personal, propósito y superación para transformar tu mentalidad.</p></div><a href="https://www.youtube.com/@MSnumerologia" target="_blank" rel="noreferrer">Ver mensajes →</a></article>
+    <article><img class="service-card-art" src="<?= e(url('assets/service-ritual-limpieza-v1.png?v=0.8.8')) ?>" alt="Cuenco ceremonial de limpieza energética"><div><h3>Rituales de limpieza</h3><p>Orientación personalizada para protección, renovación y armonización de tu campo energético.</p></div><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20informaci%C3%B3n%20sobre%20un%20ritual%20de%20limpieza" target="_blank" rel="noreferrer">Solicitar ritual →</a></article>
+    <article><img class="service-card-art" src="<?= e(url('assets/service-estudio-numerologico-v1.png?v=0.8.8')) ?>" alt="Matriz profesional de estudio numerológico"><div><h3>Estudios numerológicos</h3><p>Análisis de nombre, fecha de nacimiento, talentos, desafíos, propósito y ciclos personales.</p></div><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20solicitar%20un%20estudio%20numerol%C3%B3gico" target="_blank" rel="noreferrer">Pedir mi estudio →</a></article>
+    <article><img class="service-card-art" src="<?= e(url('assets/service-numeros-dia-v1.png?v=0.8.8')) ?>" alt="Rueda celestial de números del día"><div><h3>Números del día</h3><p>Predicciones, números clave y recomendaciones para acompañar tus decisiones cotidianas.</p></div><a href="https://wa.me/573137009000?text=Hola%20Miguel%2C%20quiero%20recibir%20los%20n%C3%BAmeros%20del%20d%C3%ADa" target="_blank" rel="noreferrer">Recibir mis números →</a></article>
+    <article class="horoscope-service"><img class="horoscope-service-art" src="<?= e(url('assets/service-carta-astral-v1.png?v=0.8.8')) ?>" alt="Mapa cósmico del horóscopo"><div><small>Doce signos · tres decanatos</small><h3>Horóscopo</h3><p>Consulta la orientación general de tu signo o solicita una lectura personalizada calculada desde tu carta natal.</p></div><a class="horoscope-service-button" href="<?= e(url('horoscopo.php')) ?>">Consultar mi horóscopo →</a></article>
   </div>
 </section>
 
