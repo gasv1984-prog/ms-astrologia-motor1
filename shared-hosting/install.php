@@ -226,8 +226,8 @@ if (empty($_SESSION['csrf'])) {
 <section class="center-card"><div class="eyebrow">Instalador automatico</div><h1>MS Astrologia</h1>
 <?php if ($error): ?><div class="alert error"><strong>No se pudo instalar</strong><br><?= h($error) ?></div><?php endif; ?>
 <?php if ($success): ?><div class="alert success"><?= h($success) ?></div><?php endif; ?>
-<?php if ($installed): ?><p>La base, el administrador, el secreto y GeoNames ya estan configurados.</p><a class="primary-button" href="admin/index.php"><span>Abrir administrador</span><span>→</span></a>
-<?php else: ?><p>Completa una sola vez los datos creados en Hostinger. El instalador generara <code>config.php</code>, las tablas, GeoNames y el administrador.</p>
+<?php if ($installed): ?><p>La base, el administrador, el secreto, GeoNames y el motor gratuito de GitHub ya están configurados.</p><a class="primary-button" href="admin/index.php"><span>Abrir administrador</span><span>→</span></a>
+<?php else: ?><p>Completa una sola vez los datos creados en Hostinger. El instalador generará <code>config.php</code>, todas las tablas, el catálogo GeoNames, el administrador y la conexión con el motor astral gratuito de GitHub.</p>
 <form method="post" class="stack-form" autocomplete="off"><input type="hidden" name="csrf" value="<?= h($_SESSION['csrf']) ?>">
 <label>URL del sitio<input name="app_url" required value="<?= h($values['app_url']) ?>"></label>
 <label>Servidor MySQL<input name="db_host" required value="<?= h($values['db_host']) ?>"></label>
@@ -238,6 +238,6 @@ if (empty($_SESSION['csrf'])) {
 <label>Usuario administrador<input name="admin_username" required minlength="3" value="<?= h($values['admin_username']) ?>"></label>
 <label>Contrasena del administrador<input type="password" name="admin_password" required minlength="12" autocomplete="new-password"><small>Debe ser distinta de la contrasena MySQL.</small></label>
 <label>Correo remitente <small>opcional</small><input type="email" name="mail_from" value="<?= h($values['mail_from']) ?>" placeholder="resultados@miguelsalazarastrologia.com"></label>
-<button class="primary-button"><span>Instalar todo automaticamente</span><span>→</span></button></form>
+<button class="primary-button"><span>Configurar base de datos y aplicación</span><span>→</span></button></form>
 <p class="data-credit">La importacion de 235.877 localidades puede tardar uno o dos minutos. No cierres la pagina durante el proceso.</p><?php endif; ?></section>
 </main><footer><span>MS Astrologia</span><span>Instalacion segura para Hostinger</span></footer></body></html>
